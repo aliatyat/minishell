@@ -1,9 +1,4 @@
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-//#include <sys/wait.h>
-#include <fcntl.h>
-#include "LIBFT/libft.h"
+#include "pipex.h"
 
 void	handle_redirection(char *cmd) 
 {
@@ -96,91 +91,101 @@ void execute_external(char *cmd, char **envp)
 	exit(EXIT_FAILURE);
 }
 
+
+
 int minishell_pipex(char *input, char **envp)
 {
-	int i;
-	int num_cmds;
-	int **pipes;
-	pid_t pid;
-	char **cmds;
+    int i;
+    int num_cmds;
+    int **pipes;
+    pid_t pid;
+    char **cmds;
 
-	cmds = ft_split_pipes(input);
-	if (!cmds)
-		return (EXIT_FAILURE);
+    // Split input into commands
+    cmds = ft_split_pipes(input);
+    if (!cmds)
+        return (EXIT_FAILURE);
 
-	num_cmds = 0;
-	while (cmds[num_cmds])
-		num_cmds++;
+    // Count number of commands
+    num_cmds = 0;
+    while (cmds[num_cmds])
+        num_cmds++;
 
-	pipes = malloc((num_cmds - 1) * sizeof(int *));
-	if (!pipes)
-		return (EXIT_FAILURE);
+    // Allocate pipes dynamically
+    pipes = malloc((num_cmds - 1) * sizeof(int *));
+    if (!pipes)
+        return (EXIT_FAILURE);
 
-	i = 0;
-	while (i < num_cmds - 1)
-	{
-		pipes[i] = malloc(2 * sizeof(int));
-		if (pipe(pipes[i]) == -1)
-		{
-			perror("pipe error");
-			return (EXIT_FAILURE);
-		}
-		i++;
-	}
+    i = 0;
+    while (i < num_cmds - 1)
+    {
+        pipes[i] = malloc(2 * sizeof(int));
+        if (pipe(pipes[i]) == -1)
+        {
+            perror("pipe error");
+            return (EXIT_FAILURE);
+        }
+        i++;
+    }
 
-	i = 0;
-	while (cmds[i])
-	{
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork error");
-			return (EXIT_FAILURE);
-		}
-		if (pid == 0) // Child Process
-		{
-			if (i > 0)
-				dup2(pipes[i - 1][0], STDIN_FILENO);
-			if (cmds[i + 1])
-				dup2(pipes[i][1], STDOUT_FILENO);
+    // Loop through each command
+    i = 0;
+    while (cmds[i])
+    {
+        pid = fork();
+        if (pid == -1)
+        {
+            perror("fork error");
+            return (EXIT_FAILURE);
+        }
+        if (pid == 0) // Child Process
+        {
+            // Handle input and output redirection with pipes
+            if (i > 0) // Not first command, get input from previous pipe
+                dup2(pipes[i - 1][0], STDIN_FILENO);
+            if (cmds[i + 1]) // Not last command, output to next pipe
+                dup2(pipes[i][1], STDOUT_FILENO);
 
-			if (has_redirection(cmds[i])) 
-				handle_redirection(cmds[i]);
+            // Handle Redirections (>, >>, <)
+            if (has_redirection(cmds[i])) 
+                handle_redirection(cmds[i]);
 
-			// Close all pipes
-			int j = 0;
-			while (j < num_cmds - 1)
-			{
-				close(pipes[j][0]);
-				close(pipes[j][1]);
-				j++;
-			}
+            // Close all pipes in child process
+            int j = 0;
+            while (j < num_cmds - 1)
+            {
+                close(pipes[j][0]);
+                close(pipes[j][1]);
+                j++;
+            }
 
-			if (is_builtin(cmds[i]))
-				execute_builtin(cmds[i]);
-			else
-				execute_external(cmds[i], envp);
-			exit(EXIT_SUCCESS);
-		}
-		i++;
-	}
+            // Check if built-in or external command
+            if (is_builtin(cmds[i]))
+                execute_builtin(cmds[i]);
+            else
+                execute_external(cmds[i], envp);
 
-	// Parent Process
-	i = 0;
-	while (i < num_cmds - 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		i++;
-	}
+            exit(EXIT_SUCCESS);
+        }
+        i++;
+    }
 
-	i = 0;
-	while (i < num_cmds)
-	{
-		wait(NULL);
-		i++;
-	}
+    // Parent Process: Close all pipes
+    i = 0;
+    while (i < num_cmds - 1)
+    {
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+        i++;
+    }
 
-	return (0);
+    // Wait for all child processes
+    i = 0;
+    while (i < num_cmds)
+    {
+        wait(NULL);
+        i++;
+    }
+
+    return (0);
 }
-
