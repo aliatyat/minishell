@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 16:22:52 by alalauty          #+#    #+#             */
-/*   Updated: 2024/09/03 23:03:47 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/02/13 00:46:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ size_t				ft_strlen(const char *s);
 int					ft_toupper(int c);
 int					ft_tolower(int c);
 int					ft_strncmp(char *s1, char *s2, unsigned int n);
+int					ft_strcmp(char *s1, char *s2);
 void				ft_putchar_fd(char n, int fd);
 int					ft_isprint(int c);
 int					ft_isdigit(int c);
@@ -71,5 +72,7 @@ char				*ft_strchr(const char *s, int c);
 char				*ft_strnstr(const char *haystack, const char *needle,
 						size_t len);
 char				*ft_strrchr(const char *s, int c);
+char *ft_strtok(char *restrict str, const char *restrict delim);
+char *ft_strstr(const char *haystack, const char *needle);
 
 #endif

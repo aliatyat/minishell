@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/wait.h>
+//#include <sys/wait.h>
 #include <fcntl.h>
 #include "LIBFT/libft.h"
 
@@ -24,6 +24,25 @@ void	handle_redirection(char *cmd)
 	}
 	close(fd);
 }
+
+int has_redirection(char *cmd)
+{
+    int i = 0;
+    
+    while (cmd[i])
+    {
+        if (cmd[i] == '>' || cmd[i] == '<')
+        {
+            if (cmd[i] == '>' && cmd[i + 1] == '>')
+                return 1;
+            return 1;
+        }
+        i++;
+    }
+    
+    return 0;
+}
+
 
 int	is_builtin(char *cmd) 
 {
