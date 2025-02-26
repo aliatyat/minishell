@@ -3,13 +3,13 @@ LIBFT = ./LIBFT/libft.a
 SRC = pipex.c  pipex_u.c free_split.c mini.c
 OBJ = $(SRC:.c=.o)
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g
 #prerequisite
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C ./LIBFT
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBFT) -lreadline
 clean:
 	rm -f $(OBJ)
 	make clean -C ./LIBFT

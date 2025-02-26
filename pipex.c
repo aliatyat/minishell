@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:18:24 by alalauty          #+#    #+#             */
-/*   Updated: 2025/02/26 16:25:30 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/02/26 18:35:07 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,17 @@ int	main(int argc, char **argv, char **envp)
 	int		fd_in;
 	int		fd_out;
 	int		pipe_fd[2];
-
+	while(1)
+	{
+		char *line = readline("minishell$ ");
+    if (minishell_pipex(line, envp) == EXIT_FAILURE)
+    {
+        ft_putstr_fd("Error executing pipex\n", 2);
+        return (EXIT_FAILURE);
+    }
+	}
+		
+	
  // Check argument count
     // if (argc < 0)
     // {
@@ -99,14 +109,10 @@ int	main(int argc, char **argv, char **envp)
 		return (EXIT_FAILURE);
 	}
 	   // Handle multiple commands with minishell_pipex
-    if (minishell_pipex(argv[1], envp) == EXIT_FAILURE)
-    {
-        ft_putstr_fd("Error executing pipex\n", 2);
-        return (EXIT_FAILURE);
-    }
 	//int i = 0;
 	//while (minishell_pipex(argv[i], envp))
 	//{
+
 		if (access(argv[1], R_OK) != -1)
 		launch_first_child(argv[2], (int []){fd_in, fd_out}, pipe_fd, envp);
 		if (fd_out != -1)
@@ -118,4 +124,5 @@ int	main(int argc, char **argv, char **envp)
 	wait(NULL);
 	wait(NULL);
 	return (0);
+	
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:18:32 by alalauty          #+#    #+#             */
-/*   Updated: 2024/11/10 19:18:35 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/02/26 18:33:17 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+# include <readline/readline.h>
 # include "LIBFT/libft.h"
 
 void	free_split(char **split);
