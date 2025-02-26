@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:18:24 by alalauty          #+#    #+#             */
-/*   Updated: 2024/11/10 19:18:26 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/02/26 16:25:30 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,11 @@ int	main(int argc, char **argv, char **envp)
 	int		pipe_fd[2];
 
  // Check argument count
-    if (argc < 0)
-    {
-        ft_putstr_fd("Usage: ./pipex cmd1 | cmd2 | ... | cmdN\n", 2);
-        return (EXIT_FAILURE);
-    }
+    // if (argc < 0)
+    // {
+    //     ft_putstr_fd("Usage: ./pipex cmd1 | cmd2 | ... | cmdN\n", 2);
+    //     return (EXIT_FAILURE);
+    // }
 
 	open_files(argc, argv, &fd_in, &fd_out);
 	if (pipe(pipe_fd) == -1)

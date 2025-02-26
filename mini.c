@@ -2,7 +2,7 @@
 
 void	handle_redirection(char *cmd) 
 {
-	int fd;
+	int fd = 0;
 	char *file;
 
 	if (ft_strstr(cmd, ">")) 
