@@ -6,13 +6,13 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:18:24 by alalauty          #+#    #+#             */
-/*   Updated: 2025/02/26 18:35:07 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/03/02 15:44:06 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**get_paths_from_env(char **env)
+char	**get_paths_from_env(char **env, int fd)
 {
 	int		i;
 	char	**paths;
@@ -54,7 +54,7 @@ char	*find_path(char **env, char **cmd)
 	char	*full_path;
 	int		i;
 
-	paths = get_paths_from_env(env);
+	paths = get_paths_from_env(env, STDOUT_FILENO);
 	if (!paths)
 		return (NULL);
 	full_path = find_command_path(paths, cmd);

@@ -39,19 +39,25 @@ int has_redirection(char *cmd)
 }
 
 
-int	is_builtin(char *cmd) 
+int	is_builtin(char *cmd)
 {
-	return (!ft_strcmp(cmd, "echo") || !ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "export"));
+	if (!cmd)
+		return (0);
+	return (!ft_strcmp(cmd, "echo") || !ft_strcmp(cmd, "cd") ||
+			!ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "export") ||
+			!ft_strcmp(cmd, "unset") || 
+			!ft_strcmp(cmd, "exit"));
 }
 
-void	execute_builtin(char *cmd) 
-{
-	if (!ft_strcmp(cmd, "cd"))
-		chdir(ft_strchr(cmd, ' ') + 1);
-	else if (!ft_strcmp(cmd, "echo"))
-		ft_putstr_fd(ft_strchr(cmd, ' ') + 1, 1);
-	// Implement other built-ins...
-}
+
+// void	execute_builtin(char **cmd) 
+// {
+// 	if (!ft_strcmp(cmd, "cd"))
+// 		ft_cd(cmd);
+// 	else if (!ft_strcmp(cmd, "echo"))
+// 		ft_echo(cmd);
+// 	// Implement other built-ins...
+// }
 
 char	**ft_split_pipes(char *input)
 {
@@ -161,7 +167,7 @@ int minishell_pipex(char *input, char **envp)
 
             // Check if built-in or external command
             if (is_builtin(cmds[i]))
-                execute_builtin(cmds[i]);
+                execute_builtin(cmds, envp);
             else
                 execute_external(cmds[i], envp);
 

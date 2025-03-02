@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/10 19:18:32 by alalauty          #+#    #+#             */
-/*   Updated: 2025/02/26 18:33:17 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/03/02 16:40:26 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,6 @@ void	launch_first_child(char *cmd, int fds[2], int pipe_fd[2], char **envp);
 void	launch_second_child(char *cmd, int pipe_fd[2], int fd_out, char **envp);
 char	*find_path(char **env, char **cmd);
 int minishell_pipex(char *input, char **envp);
+char	**get_paths_from_env(char **env, int fd);
 
 #endif

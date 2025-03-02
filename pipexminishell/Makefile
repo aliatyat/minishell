@@ -1,6 +1,6 @@
 NAME = pipex
 LIBFT = ./LIBFT/libft.a
-SRC = pipex.c  pipex_u.c free_split.c mini.c
+SRC = pipex.c  pipex_u.c free_split.c mini.c built_in.c
 OBJ = $(SRC:.c=.o)
 CC = cc
 CFLAGS = -g
