@@ -86,6 +86,20 @@ int	main(int argc, char **argv, char **envp)
 	while(1)
 	{
 		char *line = readline("minishell$ ");
+		// Check if readline returned NULL (Ctrl+D)
+		if (!line)
+		{
+			ft_putstr_fd("exit\n", 2);
+			exit(EXIT_SUCCESS);
+		}
+	
+		// Ignore empty lines (when user presses Enter)
+		if (*line == '\0')
+		{
+			free(line);
+			continue; // Restart loop
+		}
+		add_history(line);
     if (minishell_pipex(line, envp) == EXIT_FAILURE)
     {
         ft_putstr_fd("Error executing pipex\n", 2);

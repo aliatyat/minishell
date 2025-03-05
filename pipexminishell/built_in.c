@@ -122,21 +122,21 @@ char	**remove_env_variable(char **envp, char *var)
 
 
 
-void	ft_unset(char **args, char ***envp)
+void	ft_unset(char **args, char **envp)
 {
 	if (args[1])
-		*envp = remove_env_variable(*envp, args[1]);
+		envp = remove_env_variable(envp, args[1]);
 }
 
 
-void	ft_export(char **args, char ***envp)
+void	ft_export(char **args, char **envp)
 {
 	if (!args[1]) // No argument, print all environment variables
-		ft_env(*envp);
+		ft_env(envp);
 	else
 	{
 		// Add new variable to envp
-		*envp = add_env_variable(*envp, args[1]);
+		envp = add_env_variable(envp, args[1]);
 	}
 }
 
@@ -151,7 +151,7 @@ void	ft_pwd(void)
 }
 
 
-int	execute_builtin(char **args, char ***envp)
+int	execute_builtin(char **args, char **envp)
 {
 	if (!ft_strcmp(args[0], "echo"))
 		ft_echo(args);

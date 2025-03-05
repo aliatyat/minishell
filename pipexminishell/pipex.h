@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
+# include <readline/history.h>
 # include "LIBFT/libft.h"
 
 void	free_split(char **split);
@@ -31,5 +32,6 @@ void	launch_second_child(char *cmd, int pipe_fd[2], int fd_out, char **envp);
 char	*find_path(char **env, char **cmd);
 int minishell_pipex(char *input, char **envp);
 char	**get_paths_from_env(char **env, int fd);
+int	execute_builtin(char **args, char **envp);
 
 #endif
