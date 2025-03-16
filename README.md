@@ -19,16 +19,16 @@ int	is_builtin(char *cmd);                  // Check if command is built-in ✅
 
 void	builtin_cd(char *path);               // Handle cd command
 
-void	builtin_echo(char **args);            // Handle echo command
+void	builtin_echo(char **args);            // Handle echo command ✅
 
-void	builtin_export(char *var);            // Handle export VAR=value
+void	builtin_export(char *var);            // Handle export VAR=value ✅
 
 void	builtin_exit(char **args);            // Handle exit
 
 
-// Redirections
+// Redirections  ✅ ✅
 
-void	handle_redirection(char *cmd);        // Handle '<', '>', '>>'   
+void	handle_redirection(char *cmd);        // Handle '<', '>', '>>'    ✅
 
 int	has_redirection(char *cmd);            // Check if command has redirection  ✅
 
