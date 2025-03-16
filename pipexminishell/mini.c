@@ -1,42 +1,42 @@
 #include "pipex.h"
 
-void	handle_redirection(char *cmd) 
-{
-	int fd = 0;
-	char *file;
+// void	handle_redirection(char *cmd) 
+// {
+// 	int fd = 0;
+// 	char *file;
 
-	if (ft_strstr(cmd, ">")) 
-	{
-		file = ft_strchr(cmd, '>') + 1;
-		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		dup2(fd, STDOUT_FILENO);
-	} 
-	else if (ft_strstr(cmd, ">>")) 
-	{
-		file = ft_strchr(cmd, '>') + 2;
-		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		dup2(fd, STDOUT_FILENO);
-	}
-	close(fd);
-}
+// 	if (ft_strstr(cmd, ">")) 
+// 	{
+// 		file = ft_strchr(cmd, '>') + 1;
+// 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+// 		dup2(fd, STDOUT_FILENO);
+// 	} 
+// 	else if (ft_strstr(cmd, ">>")) 
+// 	{
+// 		file = ft_strchr(cmd, '>') + 2;
+// 		fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+// 		dup2(fd, STDOUT_FILENO);
+// 	}
+// 	close(fd);
+// }
 
-int has_redirection(char *cmd)
-{
-    int i = 0;
+// int has_redirection(char *cmd)
+// {
+//     int i = 0;
     
-    while (cmd[i])
-    {
-        if (cmd[i] == '>' || cmd[i] == '<')
-        {
-            if (cmd[i] == '>' && cmd[i + 1] == '>')
-                return 1;
-            return 1;
-        }
-        i++;
-    }
+//     while (cmd[i])
+//     {
+//         if (cmd[i] == '>' || cmd[i] == '<')
+//         {
+//             if (cmd[i] == '>' && cmd[i + 1] == '>')
+//                 return 1;
+//             return 1;
+//         }
+//         i++;
+//     }
     
-    return 0;
-}
+//     return 0;
+// }
 
 
 int	is_builtin(char *cmd)
