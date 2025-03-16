@@ -1,6 +1,25 @@
 #include "pipex.h"
 
-void	ft_echo(char **args)
+
+char *expand_env_var(char *arg, char **envp)
+{
+    if (arg[0] == '$')
+    {
+        char *var_name = arg + 1; // Skip the '$' character
+        int i = 0;
+        while (envp[i])
+        {
+            if (!ft_strncmp(envp[i], var_name, ft_strlen(var_name)) && envp[i][ft_strlen(var_name)] == '=')
+            {
+                return (envp[i] + ft_strlen(var_name) + 1); // Return the value of the environment variable
+            }
+            i++;
+        }
+    }
+    return arg; // Return the original argument if no environment variable is found
+}
+
+void	ft_echo(char **args, char **envp)
 {
 	int i = 1;
 	int newline = 1;
@@ -12,7 +31,9 @@ void	ft_echo(char **args)
 	}
 	while (args[i])
 	{
-		ft_putstr_fd(args[i], STDOUT_FILENO);
+		char *expanded_arg = expand_env_var(args[i], envp);
+		ft_putstr_fd(expanded_arg, STDOUT_FILENO);
+		//ft_putstr_fd(args[i], STDOUT_FILENO);
 		if (args[i + 1])
 			ft_putchar_fd(' ', STDOUT_FILENO);
 		i++;
@@ -154,7 +175,7 @@ void	ft_pwd(void)
 int	execute_builtin(char **args, char **envp)
 {
 	if (!ft_strcmp(args[0], "echo"))
-		ft_echo(args);
+		ft_echo(args, envp);
 	else if (!ft_strcmp(args[0], "cd"))
 		ft_cd(args);
 	else if (!ft_strcmp(args[0], "pwd"))
