@@ -97,7 +97,71 @@ void execute_external(char *cmd, char **envp)
 	exit(EXIT_FAILURE);
 }
 
+void handle_redirection1(char **cmd)
+{
+    int i = 0;
+    int input_fd = -1;
+    int output_fd = -1;
 
+    while (cmd[i])
+    {
+        if (ft_strcmp(cmd[i], ">") == 0)
+        {
+            output_fd = open(cmd[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (output_fd == -1)
+            {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(output_fd, STDOUT_FILENO);
+            cmd[i] = NULL;
+            cmd[i + 1] = NULL;
+        }
+        else if (ft_strcmp(cmd[i], ">>") == 0)
+        {
+            output_fd = open(cmd[i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (output_fd == -1)
+            {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(output_fd, STDOUT_FILENO);
+            cmd[i] = NULL;
+            cmd[i + 1] = NULL;
+        }
+        else if (ft_strcmp(cmd[i], "<") == 0)
+        {
+            input_fd = open(cmd[i + 1], O_RDONLY);
+            if (input_fd == -1)
+            {
+                perror("open");
+                exit(EXIT_FAILURE);
+            }
+            dup2(input_fd, STDIN_FILENO);
+            cmd[i] = NULL;
+            cmd[i + 1] = NULL;
+        }
+        else if (ft_strcmp(cmd[i], "<<") == 0)
+        {
+            // Handle here-document (heredoc)
+            // This is a more complex case and requires additional handling
+        }
+        i++;
+    }
+
+    // Remove NULL entries from the command array
+    i = 0;
+    int j = 0;
+    while (cmd[i])
+    {
+        if (cmd[i] != NULL)
+        {
+            cmd[j++] = cmd[i];
+        }
+        i++;
+    }
+    cmd[j] = NULL;
+}
 
 int minishell_pipex(char *input, char **envp)
 {
@@ -152,24 +216,29 @@ int minishell_pipex(char *input, char **envp)
             if (cmds[i + 1]) // Not last command, output to next pipe
                 dup2(pipes[i][1], STDOUT_FILENO);
 
-            // Handle Redirections (>, >>, <)
-            if (has_redirection(cmds[i])) 
-                handle_redirection(cmds[i]);
+             // Close all pipes in child process
+             int j = 0;
+             while (j < num_cmds - 1)
+             {
+                 close(pipes[j][0]);
+                 close(pipes[j][1]);
+                 j++;
+             }
 
-            // Close all pipes in child process
-            int j = 0;
-            while (j < num_cmds - 1)
-            {
-                close(pipes[j][0]);
-                close(pipes[j][1]);
-                j++;
-            }
+
+            // Split the command into arguments
+            char **cmd_args = ft_split(cmds[i], ' ');
+
+            // Handle Redirections (>, >>, <)
+            handle_redirection1(cmd_args);
+
+           
 
             // Check if built-in or external command
-            if (is_builtin(cmds[i]))
-                execute_builtin(cmds, envp);
+            if (is_builtin(cmd_args[0]))
+                execute_builtin(cmd_args, envp);
             else
-                execute_external(cmds[i], envp);
+                execute_external(cmd_args[0], envp);
 
             exit(EXIT_SUCCESS);
         }
