@@ -33,11 +33,11 @@ void	handle_redirection(char *cmd);        // Handle '<', '>', '>>'    ✅
 int	has_redirection(char *cmd);            // Check if command has redirection  ✅
 
 
-// Pipes
+// Pipes ✅✅
 
-void	setup_pipes(int num_cmds, int pipes[num_cmds-1][2]);  // Create pipes
+void	setup_pipes(int num_cmds, int pipes[num_cmds-1][2]);  // Create pipes ✅
 
-void	close_pipes(int num_cmds, int pipes[num_cmds-1][2]); // Close pipes after use
+void	close_pipes(int num_cmds, int pipes[num_cmds-1][2]); // Close pipes after use ✅
 
 
 // Environment Variables
