@@ -42,7 +42,7 @@ void	close_pipes(int num_cmds, int pipes[num_cmds-1][2]); // Close pipes after u
 
 // Environment Variables
 
-char	*get_env_value(char *name, char **envp); // Get value of an environment variable
+char	*get_env_value(char *name, char **envp); // Get value of an environment variable  ✅
 
 void	set_env_value(char *name, char *value); // Set environment variable
 
