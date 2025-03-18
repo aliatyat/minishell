@@ -20,23 +20,23 @@
 // 	close(fd);
 // }
 
-// int has_redirection(char *cmd)
-// {
-//     int i = 0;
+int has_redirection(char *cmd)
+{
+    int i = 0;
     
-//     while (cmd[i])
-//     {
-//         if (cmd[i] == '>' || cmd[i] == '<')
-//         {
-//             if (cmd[i] == '>' && cmd[i + 1] == '>')
-//                 return 1;
-//             return 1;
-//         }
-//         i++;
-//     }
+    while (cmd[i])
+    {
+        if (cmd[i] == '>' || cmd[i] == '<')
+        {
+            if (cmd[i] == '>' && cmd[i + 1] == '>')
+                return 1;
+            return 1;
+        }
+        i++;
+    }
     
-//     return 0;
-// }
+    return 0;
+}
 
 
 int	is_builtin(char *cmd)
@@ -97,7 +97,7 @@ void execute_external(char *cmd, char **envp)
 	exit(EXIT_FAILURE);
 }
 
-void handle_redirection1(char **cmd)
+int handle_redirection1(char **cmd)
 {
     int i = 0;
     int input_fd = -1;
@@ -114,6 +114,7 @@ void handle_redirection1(char **cmd)
                 exit(EXIT_FAILURE);
             }
             dup2(output_fd, STDOUT_FILENO);
+            close(output_fd); // Close after duplicating
             cmd[i] = NULL;
             cmd[i + 1] = NULL;
         }
@@ -126,6 +127,7 @@ void handle_redirection1(char **cmd)
                 exit(EXIT_FAILURE);
             }
             dup2(output_fd, STDOUT_FILENO);
+            close(output_fd); // Close after duplicating
             cmd[i] = NULL;
             cmd[i + 1] = NULL;
         }
@@ -138,6 +140,7 @@ void handle_redirection1(char **cmd)
                 exit(EXIT_FAILURE);
             }
             dup2(input_fd, STDIN_FILENO);
+            close(input_fd); // Close after duplicating
             cmd[i] = NULL;
             cmd[i + 1] = NULL;
         }
@@ -161,6 +164,7 @@ void handle_redirection1(char **cmd)
         i++;
     }
     cmd[j] = NULL;
+    return(0);
 }
 
 int minishell_pipex(char *input, char **envp)
@@ -225,15 +229,16 @@ int minishell_pipex(char *input, char **envp)
                  j++;
              }
 
-
-            // Split the command into arguments
-            char **cmd_args = ft_split(cmds[i], ' ');
-
+            // Split the command into commands
+            char **cmd_args = ft_split_pipes(cmds[i]);
+            
             // Handle Redirections (>, >>, <)
+            if (has_redirection(cmds[i]))
+                //Split each command into arguments
+                cmd_args = ft_split(cmds[i], ' ');
             handle_redirection1(cmd_args);
-
-           
-
+            
+                
             // Check if built-in or external command
             if (is_builtin(cmd_args[0]))
                 execute_builtin(cmd_args, envp);
@@ -261,6 +266,16 @@ int minishell_pipex(char *input, char **envp)
         wait(NULL);
         i++;
     }
+
+    // Free allocated memory
+    i = 0;
+    while (i < num_cmds - 1)
+    {
+        free(pipes[i]);
+        i++;
+    }
+    free(pipes);
+    free(cmds);
 
     return (0);
 }
