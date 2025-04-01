@@ -1,0 +1,40 @@
+built_in.c
+built_in.o
+env1.c
+env1.o
+env2.c
+env2.o
+execute_in.c
+execute_in.o
+execute_out.c
+execute_out.o
+ff
+ft_cd.c
+ft_cd.o
+ft_echo.c
+ft_echo.o
+ft_error_free.c
+ft_error_free.o
+LIBFT
+main.c
+main.o
+Makefile
+minishell
+minishell.c
+minishell.h
+ot
+out
+redirection.c
+redirection.o
+utils.c
+utils.o
+[?2004hminishell$ ls dk[H[2Jminishell$ ls dk[H[2Jminishell$ ls dk^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h^C[?2004l
+minishell$ [?2004h[?2004l
