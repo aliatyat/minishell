@@ -61,15 +61,15 @@ void close_all_pipes(t_command *cmd)
 
     while (tmp)
     {
-        if (tmp->in_fd != STDIN_FILENO)
+        if (tmp->pipefd[0] != -1)
         {
-            close(tmp->in_fd);
-            tmp->in_fd = STDIN_FILENO; // Reset to avoid double close
+            close(tmp->pipefd[0]);
+            tmp->pipefd[0] = -1;
         }
-        if (tmp->out_fd != STDOUT_FILENO)
+        if (tmp->pipefd[1] != -1)
         {
-            close(tmp->out_fd);
-            tmp->out_fd = STDOUT_FILENO; // Reset to avoid double close
+            close(tmp->pipefd[1]);
+            tmp->pipefd[1] = -1;
         }
         tmp = tmp->next;
     }

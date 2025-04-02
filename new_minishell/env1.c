@@ -123,35 +123,39 @@ char **remove_env_var(char **env,  char *var)
     return new_env;
 }
 
-void print_sorted_env(char **env, int fd)
-{
+static void sort_env(char **env, int count) {
+    int i = 0;
+    int j;
+    char *tmp;
+    
+    while (i < count - 1) {
+        j = 0;
+        while (j < count - i - 1) {
+            if (ft_strcmp(env[j], env[j + 1]) > 0) {
+                tmp = env[j];
+                env[j] = env[j + 1];
+                env[j + 1] = tmp;
+            }
+            j++;
+        }
+        i++;
+    }
+}
+
+void print_sorted_env(char **env, int fd) {
+    int i = 0;
     int count = 0;
     char **sorted_env;
-    int i, j;
-
-    while (env[count])
-        count++;
-
+    
+    while (env[count]) count++;
     sorted_env = copy_env(env);
-    if (!sorted_env)
-        return;
-
-    // Simple bubble sort
-    for (i = 0; i < count - 1; i++) {
-        for (j = 0; j < count - i - 1; j++) {
-            if (ft_strcmp(sorted_env[j], sorted_env[j + 1]) > 0) {
-                char *temp = sorted_env[j];
-                sorted_env[j] = sorted_env[j + 1];
-                sorted_env[j + 1] = temp;
-            }
-        }
-    }
-
+    if (!sorted_env) return;
+    
+    sort_env(sorted_env, count);
+    
     i = 0;
-    while (sorted_env[i])
-    {
-        if (ft_strchr(sorted_env[i], '='))
-        {
+    while (sorted_env[i]) {
+        if (ft_strchr(sorted_env[i], '=')) {
             ft_putstr_fd("declare -x ", fd);
             ft_putendl_fd(sorted_env[i], fd);
         }

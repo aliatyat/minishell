@@ -23,16 +23,14 @@ int ft_perror( char *cmd, int status)
 void free_commands(t_command *cmd)
 {
     t_command *tmp;
-
+    
     while (cmd)
     {
         tmp = cmd;
         cmd = cmd->next;
         free_split(tmp->args);
-        if (tmp->in_fd != STDIN_FILENO)
-            close(tmp->in_fd);
-        if (tmp->out_fd != STDOUT_FILENO) 
-            close(tmp->out_fd);
+        if (tmp->in_fd != STDIN_FILENO) close(tmp->in_fd);
+        if (tmp->out_fd != STDOUT_FILENO) close(tmp->out_fd);
         free(tmp);
     }
 }

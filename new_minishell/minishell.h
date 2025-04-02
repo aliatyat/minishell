@@ -36,6 +36,7 @@ typedef struct s_command {
     char        **args;
     int         in_fd;
     int         out_fd;
+    int pipefd[2];
     struct s_command *next;
 } t_command;
 
@@ -86,7 +87,7 @@ char	**ft_split_shell(const char *str, char delim);
 int is_builtin(char *cmd);
 
 // Redirection
-int handle_redirection(t_command *cmd);
+void handle_redirection(char **cmd_args);
 int has_redirection(char *cmd);
 
 void handle_sigint(int sig);

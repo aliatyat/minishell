@@ -80,12 +80,24 @@ int execute_builtin(t_command *cmd, t_shell *shell)
 int execute_command(t_command *cmd, t_shell *shell)
 {
     if (!cmd || !cmd->args || !cmd->args[0])
-    return 0;
+    {
+        shell->exit_status = 1; // Set error status
+        return 1;
+    }
 
-// If there's only one command and it's a builtin, execute directly
-if (!cmd->next && is_builtin(cmd->args[0]))
-    return execute_builtin(cmd, shell);
-
-// Otherwise execute as pipeline
-return execute_pipeline(cmd, shell);
+    // Check if we have a pipeline or single command
+    if (cmd->next)
+    {
+        return execute_pipeline(cmd, shell);
+    }
+    
+    // Handle single command
+    if (is_builtin(cmd->args[0]))
+    {
+        return execute_builtin(cmd, shell);
+    }
+    else
+    {
+        return execute_external(cmd, shell);
+    }
 }

@@ -48,15 +48,14 @@ static void process_input(t_shell *shell, char *input)
     shell->commands = parse_input(input, shell);
     if (shell->commands)
     {
-        t_command *cmd = shell->commands;
-        while (cmd)
-        {
-            shell->exit_status = execute_command(cmd, shell);
-            cmd = cmd->next;
-        }
-        printf("here\n");
-        free_commands(shell->commands);
+        // Execute the command chain
+        shell->exit_status = execute_command(shell->commands, shell);
         
+        // Clean up commands after execution
+        free_commands(shell->commands);
+        shell->commands = NULL; // Important: set to NULL after freeing
+        
+        printf("here\n"); // Debug output - consider removing
     }
 }
 

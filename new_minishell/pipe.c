@@ -1,34 +1,5 @@
 #include "minishell.h"
 
-// static char **copy_args(char **args)
-// {
-//     char **new_args;
-//     int count = 0;
-//     int i = 0;
-
-//     while (args[count])
-//         count++;
-    
-//     new_args = malloc((count + 1) * sizeof(char *));
-//     if (!new_args)
-//         return NULL;
-    
-//     while (i < count)
-//     {
-//         new_args[i] = ft_strdup(args[i]);
-//         if (!new_args[i])
-//         {
-//             while (i-- > 0)
-//                 free(new_args[i]);
-//             free(new_args);
-//             return NULL;
-//         }
-//         i++;
-//     }
-//     new_args[i] = NULL;
-//     return new_args;
-// }
-
 static t_command *create_command(char *input)
 {
     t_command *cmd;
@@ -40,9 +11,10 @@ static t_command *create_command(char *input)
         return NULL;
 
     ft_memset(cmd, 0, sizeof(t_command));
-    cmd->in_fd = STDIN_FILENO;
-    cmd->out_fd = STDOUT_FILENO;
-
+        cmd->in_fd = STDIN_FILENO;
+        cmd->out_fd = STDOUT_FILENO;
+        cmd->pipefd[0] = -1;  // Initialize pipe file descriptors
+        cmd->pipefd[1] = -1;
     tokens = ft_split_shell(input, ' ');
     if (!tokens)
     {
@@ -143,26 +115,17 @@ void setup_pipes(t_command *cmd)
 
 int execute_pipeline(t_command *cmd, t_shell *shell)
 {
-    int pipefd[2];
     pid_t pid;
-    t_command *current = cmd;
-    t_command *next;
     int prev_pipe_in = -1;
     int status;
+    t_command *current = cmd;
 
     while (current)
     {
-        next = current->next;
-        
-        if (next)
+        if (current->next && pipe(current->pipefd) == -1)
         {
-            if (pipe(pipefd) == -1)
-            {
-                ft_perror("pipe", 1);
-                return 1;
-            }
-            current->out_fd = pipefd[1];
-            next->in_fd = pipefd[0];
+            ft_perror("pipe", 1);
+            return 1;
         }
 
         pid = fork();
@@ -174,13 +137,24 @@ int execute_pipeline(t_command *cmd, t_shell *shell)
                 dup2(prev_pipe_in, STDIN_FILENO);
                 close(prev_pipe_in);
             }
+            if (current->next)
+            {
+                dup2(current->pipefd[1], STDOUT_FILENO);
+                close(current->pipefd[1]);
+            }
+
+            // Handle file redirections
+            if (current->in_fd != STDIN_FILENO)
+            {
+                dup2(current->in_fd, STDIN_FILENO);
+                close(current->in_fd);
+            }
             if (current->out_fd != STDOUT_FILENO)
             {
                 dup2(current->out_fd, STDOUT_FILENO);
                 close(current->out_fd);
             }
 
-            // Close all other pipe ends
             close_all_pipes(shell->commands);
 
             if (is_builtin(current->args[0]))
@@ -197,11 +171,11 @@ int execute_pipeline(t_command *cmd, t_shell *shell)
         // Parent closes unused pipe ends
         if (prev_pipe_in != -1)
             close(prev_pipe_in);
-        if (current->out_fd != STDOUT_FILENO)
-            close(current->out_fd);
+        if (current->next)
+            close(current->pipefd[1]);
 
-        prev_pipe_in = next ? pipefd[0] : -1;
-        current = next;
+        prev_pipe_in = current->pipefd[0];
+        current = current->next;
     }
 
     // Wait for all children
@@ -212,6 +186,9 @@ int execute_pipeline(t_command *cmd, t_shell *shell)
         else if (WIFSIGNALED(status))
             shell->exit_status = 128 + WTERMSIG(status);
     }
+
+    if (prev_pipe_in != -1)
+        close(prev_pipe_in);
 
     return shell->exit_status;
 }
