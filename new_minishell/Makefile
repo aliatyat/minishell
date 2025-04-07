@@ -1,6 +1,6 @@
 NAME = minishell
 LIBFT = ./LIBFT/libft.a
-SRC = execute_in.c execute_out.c built_in.c ft_echo.c ft_cd.c main.c utils.c ft_error_free.c redirection.c env1.c env2.c pipe.c
+SRC = execute_in.c execute_out.c built_in.c ft_echo.c ft_cd.c main.c utils.c ft_error_free.c redirection.c env1.c env2.c env3.c pipe.c
 OBJ = $(SRC:.c=.o)
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g

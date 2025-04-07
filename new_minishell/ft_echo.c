@@ -1,91 +1,105 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/07 14:12:07 by alalauty          #+#    #+#             */
+/*   Updated: 2025/04/07 14:40:25 by alalauty         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-static int handle_echo_option(t_command *cmd, int *i)
+static int	handle_echo_option(t_command *cmd, int *i)
 {
-    if (cmd->args[1] && !ft_strcmp(cmd->args[1], "-n"))
-    {
-        (*i)++;
-        return 0;
-    }
-    return 1;
+	if (cmd->args[1] && !ft_strcmp(cmd->args[1], "-n"))
+	{
+		(*i)++;
+		return (0);
+	}
+	return (1);
 }
 
-static void print_exit_status(t_shell *shell, int out_fd)
+static void	print_exit_status(t_shell *shell, int out_fd)
 {
-    char *exit_status = ft_itoa(shell->exit_status);
-    ft_putstr_fd(exit_status, out_fd);
-    free(exit_status);
+	char	*exit_status;
+
+	exit_status = ft_itoa(shell->exit_status);
+	ft_putstr_fd(exit_status, out_fd);
+	free(exit_status);
 }
 
-static void print_env_var(char *var_start, char **arg, t_shell *shell, int out_fd)
+static void	print_env_var(char *var_start, char **arg, t_shell *shell,
+		int out_fd)
 {
-    char *var_name;
-    char *value;
+	char	*var_name;
+	char	*value;
 
-    while (**arg && (ft_isalnum(**arg) || **arg == '_'))
-        (*arg)++;
-    
-    var_name = ft_substr(var_start, 0, *arg - var_start);
-    value = get_env_value(shell->env, var_name);
-    if (value)
-        ft_putstr_fd(value, out_fd);
-    free(var_name);
+	while (**arg && (ft_isalnum(**arg) || **arg == '_'))
+		(*arg)++;
+	var_name = ft_substr(var_start, 0, *arg - var_start);
+	value = get_env_value(shell->env, var_name);
+	if (value)
+		ft_putstr_fd(value, out_fd);
+	free(var_name);
 }
 
-static void process_echo_arg(char *arg, t_shell *shell, int out_fd)
+static void	process_echo_arg(char *arg, t_shell *shell, int out_fd)
 {
-    int in_single_quote = 0;
-    int in_double_quote = 0;
+	int	in_single_quote;
+	int	in_double_quote;
 
-    while (*arg)
-    {
-        if (*arg == '\'' && !in_double_quote)
-        {
-            in_single_quote = !in_single_quote;
-            arg++;
-            continue;
-        }
-        else if (*arg == '"' && !in_single_quote)
-        {
-            in_double_quote = !in_double_quote;
-            arg++;
-            continue;
-        }
-
-        if (*arg == '$' && *(arg + 1) && !in_single_quote)
-        {
-            arg++;
-            if (*arg == '?')
-            {
-                print_exit_status(shell, out_fd);
-                arg++;
-                continue;
-            }
-            print_env_var(arg, &arg, shell, out_fd);
-        }
-        else
-        {
-            ft_putchar_fd(*arg, out_fd);
-            arg++;
-        }
-    }
+	in_single_quote = 0;
+	in_double_quote = 0;
+	while (*arg)
+	{
+		if (*arg == '\'' && !in_double_quote)
+		{
+			in_single_quote = !in_single_quote;
+			arg++;
+			continue ;
+		}
+		else if (*arg == '"' && !in_single_quote)
+		{
+			in_double_quote = !in_double_quote;
+			arg++;
+			continue ;
+		}
+		if (*arg == '$' && *(arg + 1) && !in_single_quote)
+		{
+			arg++;
+			if (*arg == '?')
+			{
+				print_exit_status(shell, out_fd);
+				arg++;
+				continue ;
+			}
+			print_env_var(arg, &arg, shell, out_fd);
+		}
+		else
+		{
+			ft_putchar_fd(*arg, out_fd);
+			arg++;
+		}
+	}
 }
 
-void ft_echo(t_command *cmd, t_shell *shell)
+void	ft_echo(t_command *cmd, t_shell *shell)
 {
-    int i = 1;
-    int newline = handle_echo_option(cmd, &i);
+	int	i;
+	int	newline;
 
-    while (cmd->args[i])
-    {
-        process_echo_arg(cmd->args[i], shell, cmd->out_fd);
-        if (cmd->args[i + 1])
-            ft_putchar_fd(' ', cmd->out_fd);
-        i++;
-    }
-    
-    if (newline)
-        ft_putchar_fd('\n', cmd->out_fd);
+	i = 1;
+	newline = handle_echo_option(cmd, &i);
+	while (cmd->args[i])
+	{
+		process_echo_arg(cmd->args[i], shell, cmd->out_fd);
+		if (cmd->args[i + 1])
+			ft_putchar_fd(' ', cmd->out_fd);
+		i++;
+	}
+	if (newline)
+		ft_putchar_fd('\n', cmd->out_fd);
 }
