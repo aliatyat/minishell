@@ -12,13 +12,13 @@
 
 #ifndef LIBFT_H
 # define LIBFT_H
+# include "ft_printf.h"
+# include "get_next_line.h"
 # include <stddef.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-# include "get_next_line.h"
-# include "ft_printf.h"
 
 typedef struct s_list
 {
@@ -72,7 +72,7 @@ char				*ft_strchr(const char *s, int c);
 char				*ft_strnstr(const char *haystack, const char *needle,
 						size_t len);
 char				*ft_strrchr(const char *s, int c);
-char *ft_strtok(char *restrict str, const char *restrict delim);
-char *ft_strstr(const char *haystack, const char *needle);
+char				*ft_strtok(char *restrict str, const char *restrict delim);
+char				*ft_strstr(const char *haystack, const char *needle);
 
 #endif

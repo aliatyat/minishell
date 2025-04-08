@@ -42,7 +42,7 @@
 //         if (ft_strcmp(cmd->args[i], ">") == 0 && cmd->args[i+1])
 //         {
 //             cmd->out_fd = open(cmd->args[i+1], O_WRONLY|O_CREAT|O_TRUNC,
-		// 0644);
+// 0644);
 //             cmd->args[i] = NULL;
 //         }
 //         i++;
@@ -50,6 +50,23 @@
 
 //     return (cmd);
 // }
+
+char	*ft_strndup(char *s, size_t n)
+{
+	char	*new;
+	size_t	len;
+
+	len = ft_strlen(s);
+	// Use whichever is smaller: the string length or n
+	if (n < len)
+		len = n;
+	new = malloc(len + 1); // +1 for null terminator
+	if (!new)
+		return (NULL);
+	ft_memcpy(new, s, len); // Copy up to n characters
+	new[len] = '\0';        // Always null-terminate
+	return (new);
+}
 
 char	*ft_strjoin3(const char *s1, const char *s2, const char *s3)
 {
@@ -87,7 +104,7 @@ char	**ft_realloc_strarr(char **arr, size_t new_size)
 	return (new);
 }
 
-static int	count_tokens(const char *str, char delim)
+static int	count_tokens(char *str, char delim)
 {
 	int		count;
 	int		in_quotes;
@@ -123,7 +140,7 @@ static int	count_tokens(const char *str, char delim)
 	return (count + 1);
 }
 
-static char	*get_next_token(const char **str, char delim)
+static char	*get_next_token(char **str, char delim)
 {
 	const char	*start;
 	char		*token;
@@ -166,7 +183,7 @@ static char	*get_next_token(const char **str, char delim)
 	return (token);
 }
 
-char	**ft_split_shell(const char *str, char delim)
+char	**ft_split_shell(char *str, char delim)
 {
 	char	**result;
 	int		token_count;
@@ -193,6 +210,99 @@ char	**ft_split_shell(const char *str, char delim)
 	return (result);
 }
 
+char	**split_with_redirections(char *input)
+{
+	char	*ptr;
+	int		i;
+	int		in_quotes;
+	char	quote_char;
+	char	*start;
+
+	char **tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
+	ptr = input;
+	i = 0;
+	in_quotes = 0;
+	quote_char = 0;
+	if (!tokens)
+		return (NULL);
+	while (*ptr)
+	{
+		// Skip whitespace unless in quotes
+		if (!in_quotes && (*ptr == ' ' || *ptr == '\t'))
+		{
+			ptr++;
+			continue ;
+		}
+		// Handle quotes
+		if (*ptr == '\'' || *ptr == '"')
+		{
+			if (!in_quotes)
+			{
+				quote_char = *ptr;
+				in_quotes = 1;
+				ptr++;
+				continue ;
+			}
+			else if (*ptr == quote_char)
+			{
+				in_quotes = 0;
+				ptr++;
+				continue ;
+			}
+		}
+		// Handle redirections (only outside quotes)
+		if (!in_quotes && (*ptr == '>' || *ptr == '<'))
+		{
+			if (ptr[1] == *ptr) // >> or <<
+			{
+				tokens[i++] = ft_strndup(ptr, 2);
+				ptr += 2;
+			}
+			else // > or <
+			{
+				tokens[i++] = ft_strndup(ptr, 1);
+				ptr += 1;
+			}
+			continue ;
+		}
+		// Normal token
+		start = ptr;
+		while (*ptr && (in_quotes || (*ptr != ' ' && *ptr != '\t' && *ptr != '>'
+					&& *ptr != '<')))
+			ptr++;
+		tokens[i++] = ft_strndup(start, ptr - start);
+	}
+	tokens[i] = NULL;
+	return (tokens);
+}
+
+char	**remove_null_args(char **args)
+{
+	int		count;
+	int		i;
+	char	**new_args;
+	int		j;
+
+	count = 0;
+	i = 0;
+	while (args[count])
+		count++;
+	new_args = malloc((count + 1) * sizeof(char *));
+	if (!new_args)
+		return (NULL);
+	j = 0;
+	for (i = 0; i < count; i++)
+	{
+		if (args[i])
+		{
+			new_args[j] = args[i];
+			j++;
+		}
+	}
+	new_args[j] = NULL;
+	free(args);
+	return (new_args);
+}
 // int is_builtin( char *cmd)
 // {
 //     if (!cmd)

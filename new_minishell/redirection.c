@@ -65,3 +65,17 @@ int	has_redirection(char *cmd)
 	}
 	return (0);
 }
+
+int has_one_redirection(char c)
+{
+	return (c == '>' || c == '<');
+}
+
+int has_two_redirection(char *str)
+{
+	if (str[0] == '>' && str[1] == '>')
+		return (1);
+	if(str[0] == '<' && str[1] == '<')
+		return (1);
+	return (0);
+}

@@ -12,50 +12,69 @@
 
 #include "minishell.h"
 
-static t_command	*create_command(char *input)
+t_command	*create_command(char *input)
 {
 	t_command	*cmd;
 	char		**tokens;
 	int			i;
 
 	i = 0;
+	//char *ptr = input;
 	cmd = malloc(sizeof(t_command));
 	if (!cmd)
 		return (NULL);
 	ft_memset(cmd, 0, sizeof(t_command));
 	cmd->in_fd = STDIN_FILENO;
 	cmd->out_fd = STDOUT_FILENO;
-	cmd->pipefd[0] = -1; // Initialize pipe file descriptors
+	cmd->pipefd[0] = -1;
 	cmd->pipefd[1] = -1;
-	tokens = ft_split_shell(input, ' ');
+	// First pass: split including redirection symbols as separate tokens
+	tokens = split_with_redirections(input);
 	if (!tokens)
 	{
 		free(cmd);
 		return (NULL);
 	}
-	cmd->args = tokens;
-	// Handle redirections
-	while (cmd->args[i])
+	// Second pass: process redirections
+	i = 0;
+	while (tokens[i])
 	{
-		if (ft_strcmp(cmd->args[i], ">") == 0 && cmd->args[i + 1])
+		if (ft_strcmp(tokens[i], ">") == 0 && tokens[i + 1])
 		{
-			cmd->out_fd = open(cmd->args[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
+			cmd->out_fd = open(tokens[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
 					0644);
-			cmd->args[i] = NULL;
+			free(tokens[i]);
+			free(tokens[i + 1]);
+			tokens[i] = NULL;
+			tokens[i + 1] = NULL;
+			i += 2;
 		}
-		else if (ft_strcmp(cmd->args[i], ">>") == 0 && cmd->args[i + 1])
+		else if (ft_strcmp(tokens[i], ">>") == 0 && tokens[i + 1])
 		{
-			cmd->out_fd = open(cmd->args[i + 1], O_WRONLY | O_CREAT | O_APPEND,
+			cmd->out_fd = open(tokens[i + 1], O_WRONLY | O_CREAT | O_APPEND,
 					0644);
-			cmd->args[i] = NULL;
+			free(tokens[i]);
+			free(tokens[i + 1]);
+			tokens[i] = NULL;
+			tokens[i + 1] = NULL;
+			i += 2;
 		}
-		else if (ft_strcmp(cmd->args[i], "<") == 0 && cmd->args[i + 1])
+		else if (ft_strcmp(tokens[i], "<") == 0 && tokens[i + 1])
 		{
-			cmd->in_fd = open(cmd->args[i + 1], O_RDONLY);
-			cmd->args[i] = NULL;
+			cmd->in_fd = open(tokens[i + 1], O_RDONLY);
+			free(tokens[i]);
+			free(tokens[i + 1]);
+			tokens[i] = NULL;
+			tokens[i + 1] = NULL;
+			i += 2;
 		}
-		i++;
+		else
+		{
+			i++;
+		}
 	}
+	// Compact the arguments array (remove NULLs)
+	cmd->args = remove_null_args(tokens);
 	return (cmd);
 }
 
