@@ -2,7 +2,8 @@
 
 int is_builtin(char *cmd)
 {
-    char *builtins[] = {
+    char *builtins[] = 
+    {
         "cd", "echo", "pwd", "export",
         "unset", "env", "exit",  NULL
     };
@@ -52,7 +53,7 @@ int handle_common_builtins(char *command, t_command *cmd, t_shell *shell)
         ft_env(shell);
         return 1;
     }
-    // else if (ft_strrechr(command, "$") == 0)
+    // else if (ft_split(command, '$') == 0)
     // {
     //     printf("innn\n");
     //     //int i = 1;

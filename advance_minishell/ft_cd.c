@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-static int handle_cd_target(t_command *cmd, t_shell *shell, char **target_dir)
+int handle_cd_target(t_command *cmd, t_shell *shell, char **target_dir)
 {
     if (!cmd->args[1] || ft_strcmp(cmd->args[1], "~") == 0)
     {

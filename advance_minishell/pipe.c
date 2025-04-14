@@ -63,6 +63,7 @@ t_command *create_command(char *input)
         //     printf("hand\n");
              //tokens = split_with_redirections(input);
         // }
+       
         if(handle_redirection1(cmd) == -1)
             return NULL;
     // {
@@ -106,13 +107,14 @@ t_command *parse_input(char *input, t_shell *shell)
     int i = 0;
 
     (void)shell;
-
+    
     pipe_commands = ft_split_pipes(input);
     if (!pipe_commands)
         return NULL;
 
     while (pipe_commands[i])
     {
+        
         
         t_command *cmd = create_command(pipe_commands[i]);
         if (!cmd)
@@ -121,15 +123,15 @@ t_command *parse_input(char *input, t_shell *shell)
             free_commands(head);
             return NULL;
         }
-
+        
         if (!head)
-            head = cmd;
+        head = cmd;
         else
-            prev->next = cmd;
+        prev->next = cmd;
         prev = cmd;
         i++;
     }
-
+    
     free_split(pipe_commands);
     return head;
 }

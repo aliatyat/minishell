@@ -103,4 +103,5 @@ char	**remove_null_args(char **args);
 char	**split_with_redirections(char *input);
 int process_echo_arg(char *arg, t_shell *shell, int out_fd);
 void print_env_var(char *var_start, char **arg, t_shell *shell, int out_fd);
+char	**split_ex(char *input);
 #endif
