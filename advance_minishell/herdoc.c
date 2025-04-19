@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:44 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 21:49:58 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/19 22:04:04 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@ int	handle_heredoc(t_command *cmd, char *delimiter)
 		perror("minishell");
 		return (-1);
 	}
+
+	signal(SIGINT, SIG_DFL);  // Reset signals for heredoc
+    signal(SIGQUIT, SIG_DFL);
+	
 	// Write heredoc content to pipe
 	while (1)
 	{
@@ -46,6 +50,7 @@ int	handle_heredoc(t_command *cmd, char *delimiter)
 		close(cmd->in_fd);
 	cmd->in_fd = pipe_fd[0];
 	//expand_input(line, (t_shell*)cmd);
-	return (dup2(cmd->in_fd, STDIN_FILENO));
-	//return (1);
+	//return (dup2(cmd->in_fd, STDIN_FILENO));
+	return (0);
+	
 }

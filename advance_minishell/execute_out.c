@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:22 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 17:14:53 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/19 23:23:03 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,30 @@ int	handle_child_process(t_command *cmd, t_shell *shell, char *full_path)
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-	// Redirect input if necessary
+
 	if (cmd->in_fd != STDIN_FILENO)
-	{
-		dup2(cmd->in_fd, STDIN_FILENO);
-		close(cmd->in_fd); // Close the original file descriptor
-	}
+    {
+        if (dup2(cmd->in_fd, STDIN_FILENO) == -1)
+        {
+            ft_perror("minishell: dup2", 1);
+            return 1;
+        }
+        close(cmd->in_fd);
+    }
+	// Redirect input if necessary
+	// if (cmd->in_fd != STDIN_FILENO)
+	// {
+	// 	dup2(cmd->in_fd, STDIN_FILENO);
+	// 	close(cmd->in_fd); // Close the original file descriptor
+	// }
 	// Redirect output if necessary
 	if (cmd->out_fd != STDOUT_FILENO)
 	{
-		dup2(cmd->out_fd, STDOUT_FILENO);
+		if(dup2(cmd->out_fd, STDOUT_FILENO) == -1)
+		{
+			ft_perror("minishell: dup2", 1);
+            return 1;
+		}
 		close(cmd->out_fd); // Close the original file descriptor
 	}
 	close_all_pipes(shell->commands); // Ensure all unused pipes are closed
@@ -104,17 +118,17 @@ int	execute_external(t_command *cmd, t_shell *shell)
 	return (0);
 }
 
-int	execute_single_command(t_shell *shell, char *cmd_str)
-{
-	t_command *cmd;
-	int	status;
+// int	execute_single_command(t_shell *shell, char *cmd_str)
+// {
+// 	t_command *cmd;
+// 	int	status;
 
-	cmd = parse_input(cmd_str, shell);
-	status = 0;
+// 	cmd = parse_input(cmd_str, shell);
+// 	status = 0;
 
-	if (!cmd)
-		return (EXIT_FAILURE);
-	status = execute_command(cmd, shell);
-	free_commands(cmd);
-	return (status);
-}
+// 	if (!cmd)
+// 		return (EXIT_FAILURE);
+// 	status = execute_command(cmd, shell);
+// 	free_commands(cmd);
+// 	return (status);
+// }

@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:09 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 18:45:59 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/19 20:30:08 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ int	ft_export(t_command *cmd, t_shell *shell)
 	if (!cmd->args[1])
 	{
 		print_sorted_env(shell->env, cmd->out_fd);
+		//close(cmd->out_fd);
 		return (0);
 	}
 	while (cmd->args[i])

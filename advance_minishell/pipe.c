@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:03 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 16:17:25 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/19 23:38:05 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ t_command	*create_command(char *input, t_shell *shell)
 	cmd->in_fd = STDIN_FILENO;
 	cmd->out_fd = STDOUT_FILENO;
 	tokens = ft_split_shell(expanded_input, ' ');
+	if (!tokens)
+		return NULL;
 	free(expanded_input);
 	//char **tok = split_with_redirections(input);
 	//tokens = split_with_redirections(input);

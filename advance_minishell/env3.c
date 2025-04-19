@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 17:33:36 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 17:33:40 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/19 20:29:42 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,6 @@ void	print_sorted_env(char **env, int fd)
 		}
 		i++;
 	}
-	close(fd);
+	//close(fd);
 	free_split(sorted_env);
 }
