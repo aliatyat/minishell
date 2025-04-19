@@ -22,7 +22,7 @@ t_list	*ft_lstlast(t_list *lst)
 }
 
 /*
-int main(void)
+int	main(void)
 {
     t_list *head;
     t_list *second;
@@ -33,16 +33,13 @@ int main(void)
     head = ft_lstnew("first one");
     second = ft_lstnew("second");
     third = ft_lstnew("third");
-
     
     head->next = second;
     second->next = third;
-
     
     last_node = ft_lstlast(head);
     if (last_node)
         printf("the last node have: %s\n", (char *)last_node->content);
-
-    return 0;
+    return (0);
 }
 */

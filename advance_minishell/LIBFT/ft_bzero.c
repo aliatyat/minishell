@@ -26,13 +26,13 @@ void	ft_bzero(void *s, size_t n)
 	}
 }
 /*
-int main()
+int	main(void)
 {
-	char ar[10] = "Hello12";
+	char	ar[10];
+
+	ar[10] = "Hello12";
 	printf("befor: %s\n", ar);
-
 	ft_bzero(ar, 5);
-
 	printf("after: %s\n", ar);
 return (0);
 }

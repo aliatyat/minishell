@@ -27,15 +27,15 @@ t_list	*ft_lstnew(void *content)
 /*
     int main(void)
 {
-    int value = 42;
+	int		value;
+	t_list	*node;
 
-    t_list *node = ft_lstnew(&value);
-
+    value = 42;
+    node = ft_lstnew(&value);
     if (node)
     {
       
         printf("The content of the new node is: %d\n", *(int *)(node->content));
-
         
         free(node);
     }
@@ -43,7 +43,6 @@ t_list	*ft_lstnew(void *content)
     {
         printf("Failed to allocate memory for the new node.\n");
     }
-
-    return 0;
+    return (0);
 }
 */

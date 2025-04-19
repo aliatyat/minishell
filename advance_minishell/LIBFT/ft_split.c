@@ -6,7 +6,7 @@
 /*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 17:11:02 by alalauty          #+#    #+#             */
-/*   Updated: 2024/09/04 00:44:18 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:36:01 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ static char	**ft_malloc_strs(char **strs, const char *s, char c)
 	{
 		if (s[i] != c)
 			count++;
-		if ((s[i] == c && i > 0 && s[i - 1] != c)
-			|| (s[i] != c && s[i + 1] == '\0'))
+		if ((s[i] == c && i > 0 && s[i - 1] != c) || (s[i] != c && s[i
+					+ 1] == '\0'))
 		{
 			strs[x] = malloc(sizeof(char) * (count + 1));
 			if (!strs[x])

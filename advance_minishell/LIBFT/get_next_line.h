@@ -17,11 +17,11 @@
 #  define BUFFER_SIZE 234
 # endif
 
+# include "libft.h"
 # include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include "libft.h"
 
 char	*get_next_line(int fd);
 // int		ft_strlen(const char *str);

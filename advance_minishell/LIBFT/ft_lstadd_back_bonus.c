@@ -32,36 +32,32 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 }
 
 /*
-int main(void)
+int	main(void)
 {
     t_list *head;
     t_list *second;
     t_list *third;
     t_list *new_node;
+	t_list	*current;
 
     
     head = ft_lstnew("first n");
     second = ft_lstnew("second n");
     third = ft_lstnew("third n");
-
     
     head->next = second;
     second->next = third;
-
    
     new_node = ft_lstnew("last one");
-
     
     ft_lstadd_back(&head, new_node);
-
    
-    t_list *current = head;
+    current = head;
     while (current != NULL)
     {
         printf("%s\n", (char *)current->content);
         current = current->next;
     }
-
-    return 0;
+    return (0);
 }
 */

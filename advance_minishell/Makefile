@@ -1,6 +1,6 @@
 NAME = minishell
 LIBFT = ./LIBFT/libft.a
-SRC = execute_in.c execute_out.c built_in.c ft_echo.c ft_cd.c main.c utils.c ft_error_free.c redirection.c env1.c env2.c pipe.c ft_split_redirections.c ft_split_pipe.c herdoc.c
+SRC = execute_in.c execute_out.c execute_pip.c built_in.c ft_echo.c ft_cd.c main.c utils.c ft_error.c ft_free.c redirection.c env1.c env2.c env3.c pipe.c ft_split_redirections.c ft_split_pipe.c herdoc.c ft_exp.c
 OBJ = $(SRC:.c=.o)
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
@@ -19,6 +19,6 @@ fclean: clean
 	rm -f $(NAME)
 	make fclean -C ./LIBFT
 
-re: fclean all
+re: fclean all 
 
 .PHONY: fclean clean all re

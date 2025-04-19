@@ -1,6 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_split_redirections.c                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/17 16:27:41 by alalauty          #+#    #+#             */
+/*   Updated: 2025/04/17 17:20:29 by alalauty         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-
-
 
 char	*ft_strndup(char *s, size_t n)
 {
@@ -52,10 +62,12 @@ char	**split_with_redirections(char *input)
 	char	*ptr;
 	int		i;
 	int		in_quotes;
-	//char	quote_char;
 	char	*start;
+	char	**tokens;
+
+	//char	quote_char;
 	printf("split\n");
-	char **tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
+	tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
 	ptr = input;
 	i = 0;
 	in_quotes = 0;
@@ -64,7 +76,6 @@ char	**split_with_redirections(char *input)
 		return (NULL);
 	while (*ptr)
 	{
-		
 		// Skip whitespace unless in quotes
 		if (!in_quotes && (*ptr == ' ' || *ptr == '\t'))
 		{
@@ -115,18 +126,17 @@ char	**split_with_redirections(char *input)
 	return (tokens);
 }
 
-
-
-
 char	**split_ex(char *input)
 {
 	char	*ptr;
 	int		i;
 	int		in_quotes;
-	//char	quote_char;
 	char	*start;
+	char	**tokens;
+
+	//char	quote_char;
 	printf("split\n");
-	char **tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
+	tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
 	ptr = input;
 	i = 0;
 	in_quotes = 0;
@@ -135,7 +145,6 @@ char	**split_ex(char *input)
 		return (NULL);
 	while (*ptr)
 	{
-		
 		// Skip whitespace unless in quotes
 		if (!in_quotes && (*ptr == ' ' || *ptr == '\t'))
 		{
@@ -177,7 +186,8 @@ char	**split_ex(char *input)
 		}
 		// Normal token
 		start = ptr;
-		while (*ptr && (in_quotes || (*ptr != ' ' && *ptr != '\t' && *ptr != '$')))
+		while (*ptr && (in_quotes || (*ptr != ' ' && *ptr != '\t'
+					&& *ptr != '$')))
 			ptr++;
 		tokens[i++] = ft_strndup(start, ptr - start);
 	}
@@ -249,4 +259,3 @@ char	**split_ex(char *input)
 // 	cmd->args = remove_null_args(tokens);
 // 	return (cmd);
 // }
-

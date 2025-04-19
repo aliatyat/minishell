@@ -18,7 +18,7 @@ char	*ft_strchr(const char *s, int c)
 
 	ch = (char)c;
 	while (*s != '\0')
-	{	
+	{
 		if (*s == ch)
 			return ((char *)s);
 		s++;
@@ -28,10 +28,13 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 /*
-int main()
+int	main(void)
 {
-	const char s[] = "Ali Alautyat";
-	char *x = ft_strchr(s, '\0');
+	const char	s[];
+	char		*x;
+
+	s[] = "Ali Alautyat";
+	x = ft_strchr(s, '\0');
 	printf("found: %s\n", x);
 	return (0);
 }

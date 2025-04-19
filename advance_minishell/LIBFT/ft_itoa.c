@@ -31,9 +31,9 @@ static unsigned int	ft_num_size(int number)
 
 char	*ft_itoa(int n)
 {
-	unsigned int		number;
-	unsigned int		length;
-	char				*string;
+	unsigned int	number;
+	unsigned int	length;
+	char			*string;
 
 	length = ft_num_size(n);
 	string = (char *)malloc(sizeof(char) * (length + 1));

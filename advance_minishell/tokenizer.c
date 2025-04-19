@@ -1,5 +1,14 @@
-#include "minishell.h"
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/17 16:28:14 by alalauty          #+#    #+#             */
+/*   Updated: 2025/04/17 16:28:15 by alalauty         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -21,7 +30,7 @@ void	process_tokens(t_command *cmd, char **tokens, t_shell *shell)
 	arg_pos = 0;
 	cmd->args = malloc((count_args(tokens) + 1) * sizeof(char *));
 	if (!cmd->args)
-		return;
+		return ;
 	while (tokens[i])
 	{
 		if (is_redirection(tokens[i]))
@@ -50,7 +59,6 @@ char	*advanced_strtok(char *input)
 	/* Similar to previous get_next_token_with_redir */
 }
 
-
 static int	is_redirection(const char *str)
 {
 	return (ft_strncmp(str, ">>", 2) == 0 || ft_strncmp(str, "<<", 2) == 0 ||
@@ -61,12 +69,12 @@ static void	process_redirection(t_command *cmd, char **tokens, int *i)
 {
 	if (ft_strcmp(tokens[*i], ">") == 0 && tokens[*i + 1])
 	{
-		cmd->out_fd = open(tokens[*i + 1], O_WRONLY|O_CREAT|O_TRUNC, 0644);
+		cmd->out_fd = open(tokens[*i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		(*i) += 2;
 	}
 	else if (ft_strcmp(tokens[*i], ">>") == 0 && tokens[*i + 1])
 	{
-		cmd->out_fd = open(tokens[*i + 1], O_WRONLY|O_CREAT|O_APPEND, 0644);
+		cmd->out_fd = open(tokens[*i + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
 		(*i) += 2;
 	}
 	else if (ft_strcmp(tokens[*i], "<") == 0 && tokens[*i + 1])
@@ -118,10 +126,10 @@ static char	**split_tokens(char *input)
 
 t_command	*unified_tokenizer(char *input, t_shell *shell)
 {
-	char		**pipe_commands;
-	t_command	*head;
-	t_command	*current;
-	int			i;
+	char **pipe_commands;
+	t_command *head;
+	t_command *current;
+	int i;
 
 	pipe_commands = split_commands(input);
 	if (!pipe_commands)

@@ -25,9 +25,10 @@ void	*ft_memset(void *s, int c, size_t n)
 	return (s);
 }
 /*
-int main()
+int	main(void)
 {
-	char ar[10];
+	char	ar[10];
+
 	ft_memset(ar, 42, 10);
 	printf("%d %d %d %d %d \n", ar[0], ar[1], ar[2], ar[3], ar[4]);
 	return (0);

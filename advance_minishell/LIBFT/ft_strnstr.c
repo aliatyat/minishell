@@ -6,7 +6,7 @@
 /*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 13:11:19 by alalauty          #+#    #+#             */
-/*   Updated: 2024/08/31 22:23:06 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:30:46 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ char	*ft_strnstr(const char *book, const char *title, size_t len)
 	while (book[i] != '\0' && i < len)
 	{
 		j = 0;
-		while (book[i + j] && title[j]
-			&& i + j < len && book[i + j] == title[j])
+		while (book[i + j] && title[j] && i + j < len && book[i
+				+ j] == title[j])
 			j++;
 		if (!title[j])
 			return ((char *)(book + i));
@@ -36,13 +36,15 @@ char	*ft_strnstr(const char *book, const char *title, size_t len)
 	return (NULL);
 }
 /*
-int main()
+int	main(void)
 {
+	char	book[];
+	char	*fin;
+	char	*res;
 
-	char book[] = "";
-	char *fin = "li";
-	char *res = ft_strnstr(book, fin, 0);
-
+	book[] = "";
+	fin = "li";
+	res = ft_strnstr(book, fin, 0);
 	printf("found it: %s\n", res);
 	return (0);
 }

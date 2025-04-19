@@ -36,15 +36,14 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 }
 
 /*
-int main(void)
+int	main(void)
 {
-    char buffer[20] = "Hello, World!";
+	char	buffer[20];
 
+    buffer[20] = "Hello, World!";
  
     ft_memmove(buffer + 7, buffer + 5, 6);
-
     printf("Result: %s\n", buffer);
-
-    return 0;
+    return (0);
 }
 */

@@ -6,7 +6,7 @@
 /*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 20:11:02 by alalauty          #+#    #+#             */
-/*   Updated: 2024/09/04 18:44:44 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:35:38 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
 	const unsigned char	*s;
 	unsigned char		*d;
-	size_t				i;
+	size_t						i;
 
 	if (dst == NULL && src == NULL)
 	{

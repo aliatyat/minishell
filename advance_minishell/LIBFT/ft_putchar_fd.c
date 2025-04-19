@@ -18,25 +18,22 @@ void	ft_putchar_fd(char n, int fd)
 }
 
 /*
-int main()
+int	main(void)
 {
-	int fd;
-    char ch = 'A';
+	int		fd;
+	char	ch;
 
+    ch = 'A';
    
     fd = open("fd/output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
     if (fd == -1)
     {
  
         write(2, "Error opening file\n", 19);
-        return 1;
+        return (1);
     }
-
     ft_putchar(ch, fd);
-
     close(fd);  
-
-    return 0;
+    return (0);
 }
 */

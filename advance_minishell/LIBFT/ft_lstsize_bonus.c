@@ -26,25 +26,23 @@ int	ft_lstsize(t_list *lst)
 }
 
 /*
-int main(void)
+int	main(void)
 {
     t_list *head;
     t_list *second;
     t_list *third;
+	int	size;
 
     
     head = ft_lstnew("first node");
     second = ft_lstnew("second node");
     third = ft_lstnew("thired node");
-
     
     head->next = second;
     second->next = third;
-
     
-    int size = ft_lstsize(head);
+    size = ft_lstsize(head);
     printf("number of node: %d\n", size);
-
-    return 0;
+    return (0);
 }
 */

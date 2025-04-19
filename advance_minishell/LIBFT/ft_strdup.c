@@ -18,8 +18,9 @@ char	*ft_strdup(char *src)
 	char	*ptr;
 
 	ptr = (char *)malloc(ft_strlen(src) * sizeof(char) + 1);
-	if (ptr == NULL)
+	if (!ptr)
 	{
+		free(ptr);
 		return (0);
 	}
 	i = 0;
