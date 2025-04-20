@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:22 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 23:23:03 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/20 21:46:33 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,16 @@
 /* Main external command executor */
 int	handle_child_process(t_command *cmd, t_shell *shell, char *full_path)
 {
+	printf("HHHHHHHHHHHHHH\n");
 	char	**env_array;
 
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
-
+	// if (handle_redirection1(cmd) == -1)
+	// {
+	// 	free(handle_redirection1);
+	// 	return (1);
+	// }
 	if (cmd->in_fd != STDIN_FILENO)
     {
         if (dup2(cmd->in_fd, STDIN_FILENO) == -1)
@@ -67,10 +72,8 @@ int	handle_child_process(t_command *cmd, t_shell *shell, char *full_path)
 
 int	handle_parent_process(pid_t pid, t_shell *shell)
 {
+	printf("PPPP2\n");
 	int	status;
-
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
 	waitpid(pid, &status, 0);
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);

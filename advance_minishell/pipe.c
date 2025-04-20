@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:03 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 23:38:05 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:08:44 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,11 @@ t_command	*create_command(char *input, t_shell *shell)
 	//     printf("hand\n");
 	//tokens = split_with_redirections(input);
 	// }
-	if (handle_redirection1(cmd) == -1)
-	{
-		free(handle_redirection1);
-		return (NULL);
-	}
+	// if (handle_redirection1(cmd) == -1)
+	// {
+	// 	free(handle_redirection1);
+	// 	return (NULL);
+	// }
 	// {
 	//     free_commands(cmd);
 	//     return (NULL);

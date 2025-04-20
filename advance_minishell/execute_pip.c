@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 16:18:13 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 16:20:31 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/20 21:47:09 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,21 @@ int	start_pipe(t_command *current, t_command *next, int *pipefd)
 
 void	execute_child(t_command *cmd, int prev_pipe_in, t_shell *shell)
 {
+	printf("YOU IN\n");
+	if (handle_redirection1(cmd) == -1)
+	{
+		free(handle_redirection1);
+		return ;
+	}
 	if (prev_pipe_in != -1)
 	{
 		dup2(prev_pipe_in, STDIN_FILENO);
-		close(prev_pipe_in);
+		//close(prev_pipe_in);
 	}
 	if (cmd->out_fd != STDOUT_FILENO)
 	{
 		dup2(cmd->out_fd, STDOUT_FILENO);
-		close(cmd->out_fd);
+		//close(cmd->out_fd);
 	}
 	close_all_pipes(shell->commands);
 	if (is_builtin(cmd->args[0]))
@@ -47,19 +53,12 @@ void	execute_child(t_command *cmd, int prev_pipe_in, t_shell *shell)
 
 void	parent_cleanup(int *prev_pipe_in, t_command *cmd)
 {
+	printf("IN PPP\n");
 	if (*prev_pipe_in != -1)
 		close(*prev_pipe_in);
 	if (cmd->out_fd != STDOUT_FILENO)
 		close(cmd->out_fd);
 }
-
-// void parent_cleanup(int *prev_pipe_in, t_command *cmd)
-// {
-// 	if (*prev_pipe_in != -1)
-// 		close(*prev_pipe_in);
-// 	if (cmd->out_fd != STDOUT_FILENO)
-// 		close(cmd->out_fd);
-// }
 
 void	wait_for_children(t_shell *shell)
 {
@@ -90,10 +89,12 @@ int	execute_pipeline(t_command *cmd, t_shell *shell)
 		if (start_pipe(current, next, pipefd))
 			return (1);
 		pid = fork();
+		if (pid < 0)
+			return (ft_perror("fork", 1), 1);
 		if (pid == 0)
 			execute_child(current, prev_pipe_in, shell);
-		else if (pid < 0)
-			return (ft_perror("fork", 1), 1);
+		else if (pid != 0)
+			wait_for_children(shell);
 		parent_cleanup(&prev_pipe_in, current);
 		if (next != NULL)
 			prev_pipe_in = pipefd[0];
@@ -101,6 +102,5 @@ int	execute_pipeline(t_command *cmd, t_shell *shell)
 			prev_pipe_in = -1;
 		current = next;
 	}
-	wait_for_children(shell);
 	return (shell->exit_status);
 }

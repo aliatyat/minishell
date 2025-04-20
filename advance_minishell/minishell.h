@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:59 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 22:03:10 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/20 21:38:52 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include "LIBFT/libft.h"
+
 # include <fcntl.h>
 # include <limits.h>
 # include <readline/history.h>
@@ -21,28 +22,29 @@
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <signal.h>
 
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
 
-/* Signal numbers (standard POSIX values) */
-# ifndef SIGINT
-#  define SIGINT 2
-# endif
+// /* Signal numbers (standard POSIX values) */
+// # ifndef SIGINT
+// #  define SIGINT 2
+// # endif
 
-# ifndef SIGQUIT
-#  define SIGQUIT 3
-# endif
+// # ifndef SIGQUIT
+// #  define SIGQUIT 3
+// # endif
 
-/* Signal action macros */
-# ifndef SIG_DFL
-#  define SIG_DFL (void (*)(int))0
-# endif
+// /* Signal action macros */
+// # ifndef SIG_DFL
+// #  define SIG_DFL (void (*)(int))0
+// # endif
 
-# ifndef SIG_IGN
-#  define SIG_IGN (void (*)(int))1
-# endif
+// # ifndef SIG_IGN
+// #  define SIG_IGN (void (*)(int))1
+// # endif
 
 typedef struct s_command
 {
@@ -119,4 +121,5 @@ char					**split_ex(char *input);
 char					*ft_ex(char *cmd, t_shell *shell);
 char *expand_input(char *input, t_shell *shell);
 int has_unclosed_quotes(char *str);
+int	handle_child_process(t_command *cmd, t_shell *shell, char *full_path);
 #endif

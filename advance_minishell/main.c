@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:49 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 21:23:56 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:00:46 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,14 +100,15 @@ int	main(int argc, char **argv, char **envp)
 		input = readline("minishell$ ");
 		if (!input)
 		{
+			printf("222\n");
 			handle_eof(&shell);
 			break ;
 		}
-		if (*input == '\0')
-		{
-			free(input);
-			continue ;
-		}
+		// if (*input == '\0')
+		// {
+		// 	free(input);
+		// 	continue ;
+		// }
 		process_input(&shell, input);
 		free(input);
 	}

@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:06 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 23:20:48 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/20 22:00:58 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,14 +107,14 @@ int	handle_redirection1(t_command *cmd)
 			cmd->in_fd = open(cmd->args[i + 1], O_RDONLY);
 			if (cmd->in_fd == -1)
 			{
+				printf("HERE");
 				ft_perror(cmd->args[i + 1], 1);  // Now shows which file failed
+				close (cmd->in_fd);
 				return (-1);
 			}
-			cmd->args[i] = NULL;
-			cmd->args[i + 1] = NULL;
-			// free(cmd->args[i]);
-			// free(cmd->args[i + 1]);
-			// cmd->args[i] = cmd->args[i + 1] = NULL;
+			free(cmd->args[i]);
+			free(cmd->args[i + 1]);
+			cmd->args[i] = cmd->args[i + 1] = NULL;
 			i += 2;
 			//dup2(cmd->in_fd, STDIN_FILENO);
 		}
