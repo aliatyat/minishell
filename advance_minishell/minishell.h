@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:59 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/20 21:38:52 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/21 14:18:51 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,24 +27,6 @@
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
 # endif
-
-// /* Signal numbers (standard POSIX values) */
-// # ifndef SIGINT
-// #  define SIGINT 2
-// # endif
-
-// # ifndef SIGQUIT
-// #  define SIGQUIT 3
-// # endif
-
-// /* Signal action macros */
-// # ifndef SIG_DFL
-// #  define SIG_DFL (void (*)(int))0
-// # endif
-
-// # ifndef SIG_IGN
-// #  define SIG_IGN (void (*)(int))1
-// # endif
 
 typedef struct s_command
 {

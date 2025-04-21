@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:03 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/20 18:08:44 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/21 16:36:42 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ t_command	*parse_input(char *input, t_shell *shell)
 			prev->next = cmd;
 		prev = cmd;
 		i++;
+		
 	}
 	free_split(pipe_commands);
 	return (head);

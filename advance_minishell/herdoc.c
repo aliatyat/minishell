@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:44 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/20 22:01:02 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:36:27 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@ int	handle_heredoc(t_command *cmd, char *delimiter)
 	// Write heredoc content to pipe
 	while (1)
 	{
+		sleep(1);
 		ft_putstr_fd("> ", STDOUT_FILENO);  // Heredoc prompt
-		line = get_next_line(STDIN_FILENO); // Read from stdin
+		 line = get_next_line(STDIN_FILENO); // Read from stdin
 		//line = readline("> ");
+		printf("{%s}\n (%s)\n %d\n", delimiter, line, cmd->in_fd);
 		if (!line || (ft_strlen(line) == ft_strlen(delimiter) + 1
 				&& ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
 				&& line[ft_strlen(delimiter)] == '\n'))
@@ -42,6 +44,7 @@ int	handle_heredoc(t_command *cmd, char *delimiter)
 		}
 		//ft_echo(cmd, NULL);
 		write(pipe_fd[1], line, ft_strlen(line));
+			
 		free(line);
 	}
 	close(pipe_fd[1]); // Close write end
@@ -49,8 +52,9 @@ int	handle_heredoc(t_command *cmd, char *delimiter)
 	if (cmd->in_fd != STDIN_FILENO)
 		close(cmd->in_fd);
 	cmd->in_fd = pipe_fd[0];
+	printf("CMD %d\n", cmd->in_fd);
 	//expand_input(line, (t_shell*)cmd);
-	//return (dup2(cmd->in_fd, STDIN_FILENO));
+	//dup2(cmd->in_fd, STDIN_FILENO);
 	return (0);
 	
 }
