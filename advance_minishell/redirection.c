@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:06 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/21 17:54:12 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:08:30 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,21 +136,33 @@ int	handle_redirection1(t_command *cmd)
 		}
 		else if (ft_strcmp(cmd->args[i], "<<") == 0 && cmd->args[i + 1])
 		{
-			printf("CMD2 %s\n", cmd->args[i + 2]);
-			handle_heredoc(cmd, cmd->args[i + 1]);
-			// {
-			// 	ft_error("minishell", "heredoc failed", 1);
-			// 	return (-1);
-			// }
+			int tmp_fd = -1;
+			
+			// Handle the heredoc
+			if (handle_heredoc(cmd, cmd->args[i + 1]) == -1) 
+			{
+				return (-1);
+			}
+			
+			
+			if (tmp_fd != -1) 
+			{
+				close(tmp_fd);
+			}
+			
+			// Save the current heredoc fd for potential chaining
+			tmp_fd = cmd->in_fd;
+			
+			// For multiple heredocs, the last one will be connected to STDIN
+			if (cmd->args[i + 2] == NULL || ft_strcmp(cmd->args[i + 2], "<<") != 0) 
+			{
+				dup2(cmd->in_fd, STDIN_FILENO);
+				close(cmd->in_fd);
+			}
+    
 			free(cmd->args[i]);
 			free(cmd->args[i + 1]);
 			cmd->args[i] = cmd->args[i + 1] = NULL;
-			if(ft_strcmp(cmd->args[i + 2], "<<") != 0 || cmd->args[i + 2] == NULL)
-				dup2(cmd->in_fd, STDIN_FILENO);
-			// else
-			 //	dup2(cmd->in_fd, STDIN_FILENO);
-			printf("OUT %d\n", cmd->in_fd);
-			close(cmd->in_fd);
 			i += 2;
 		}
 		else
