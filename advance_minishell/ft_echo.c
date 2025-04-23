@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:30 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 17:16:20 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:34:30 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,26 +47,26 @@ void	print_env_var(char *var_start, char **arg, t_shell *shell, int out_fd)
 
 int	process_arg(char *arg, t_shell *shell, int out_fd)
 {
-	int	in_single_quote;
-	int	in_double_quote;
+	// int	in_single_quote;
+	// int	in_double_quote;
 
-	in_single_quote = 0;
-	in_double_quote = 0;
+	// in_single_quote = 0;
+	// in_double_quote = 0;
 	while (*arg)
 	{
-		if (*arg == '\'' && !in_double_quote)
-		{
-			in_single_quote = !in_single_quote;
-			arg++;
-			continue ;
-		}
-		else if (*arg == '"' && !in_single_quote)
-		{
-			in_double_quote = !in_double_quote;
-			arg++;
-			continue ;
-		}
-		if (*arg == '$' && *(arg + 1) && !in_single_quote)
+		// if (*arg == '\'' && !in_double_quote)
+		// {
+		// 	in_single_quote = !in_single_quote;
+		// 	arg++;
+		// 	continue ;
+		// }
+		// else if (*arg == '"' && !in_single_quote)
+		// {
+		// 	in_double_quote = !in_double_quote;
+		// 	arg++;
+		// 	continue ;
+		//}
+		if (*arg == '$' && *(arg + 1))
 		{
 			arg++;
 			if (*arg == '?')

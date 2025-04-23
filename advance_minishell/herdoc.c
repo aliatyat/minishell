@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:44 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/21 20:17:22 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:31:57 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,11 @@ int	handle_heredoc(t_command *cmd, char *delimiter)
 		
 		ft_putstr_fd("> ", STDOUT_FILENO);  // Heredoc prompt
 		 line = get_next_line(STDIN_FILENO); // Read from stdin
+		 if (line[0] == '\0')
+		 {
+			 free(line);
+			 break ;
+		 }
 		//line = readline("> ");
 		printf("{%s}\n (%s)\n %d\n", delimiter, line, cmd->in_fd);
 		if (!line || (ft_strlen(line) == ft_strlen(delimiter) + 1

@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 16:18:13 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/21 16:36:50 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:04:10 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,13 +94,13 @@ int	execute_pipeline(t_command *cmd, t_shell *shell)
 		if (pid == 0)
 			execute_child(current, prev_pipe_in, shell);
 		else if (pid != 0)
-			wait_for_children(shell);
 		parent_cleanup(&prev_pipe_in, current);
 		if (next != NULL)
-			prev_pipe_in = pipefd[0];
+		prev_pipe_in = pipefd[0];
 		else
-			prev_pipe_in = -1;
+		prev_pipe_in = -1;
 		current = next;
 	}
+	wait_for_children(shell);
 	return (shell->exit_status);
 }

@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:59 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/21 14:18:51 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:37:05 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,4 +104,10 @@ char					*ft_ex(char *cmd, t_shell *shell);
 char *expand_input(char *input, t_shell *shell);
 int has_unclosed_quotes(char *str);
 int	handle_child_process(t_command *cmd, t_shell *shell, char *full_path);
+
+
+char	**split_tokens(const char *input);
+char	**normalize_command(char **tokens);
+char	*join_tokens_back(char **tokens);
+
 #endif

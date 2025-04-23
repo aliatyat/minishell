@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:03 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/21 16:36:42 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:51:33 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,12 @@ t_command	*create_command(char *input, t_shell *shell)
 	cmd->in_fd = STDIN_FILENO;
 	cmd->out_fd = STDOUT_FILENO;
 	tokens = ft_split_shell(expanded_input, ' ');
+	int i = 0;
+	while(tokens && tokens[i])
+	{
+		printf("TOKENS: %s\n", tokens[i]);
+		i++;
+	}
 	if (!tokens)
 		return NULL;
 	free(expanded_input);
@@ -71,48 +77,6 @@ t_command	*create_command(char *input, t_shell *shell)
 		return (NULL);
 	}
 	cmd->args = tokens;
-	//tokens = tok;
-	//tok = cmd->args;
-	// Handle redirections
-	// if(has_redirection(input) == 0)
-	// {
-	//     printf("hand\n");
-	//tokens = split_with_redirections(input);
-	// }
-	// if (handle_redirection1(cmd) == -1)
-	// {
-	// 	free(handle_redirection1);
-	// 	return (NULL);
-	// }
-	// {
-	//     free_commands(cmd);
-	//     return (NULL);
-	// }
-	// while (cmd->args[i])
-	// {
-	//     printf("here\n");
-	//     if(has_redirection(&cmd->args[i]) == 0)
-	//         printf("in\n");
-	//     handle_redirection1(cmd->args[i]);
-	// if (ft_strcmp(cmd->args[i], ">") == 0 && cmd->args[i+1])
-	// {
-	//     cmd->out_fd = open(cmd->args[i+1], O_WRONLY|O_CREAT|O_TRUNC, 0644);
-	//     cmd->args[i] = NULL;
-	// }
-	// else if (ft_strcmp(cmd->args[i], ">>") == 0 && cmd->args[i+1])
-	// {
-	//     cmd->out_fd = open(cmd->args[i+1], O_WRONLY|O_CREAT|O_APPEND, 0644);
-	//     cmd->args[i] = NULL;
-	// }
-	// else if (ft_strcmp(cmd->args[i], "<") == 0 && cmd->args[i+1])
-	// {
-	//     cmd->in_fd = open(cmd->args[i+1], O_RDONLY);
-	//     cmd->args[i] = NULL;
-	// }
-	//      i++;
-	//  }
-	// Remove NULL arguments
-	//cmd->args = remove_null_args(cmd->args);
 	return (cmd);
 }
 
@@ -120,7 +84,7 @@ t_command	*parse_input(char *input, t_shell *shell)
 {
 	t_command	*head;
 	t_command	*prev;
-	char		**pipe_commands;
+	char		**pipe_commands = NULL;
 	int			i;
 	t_command	*cmd;
 
@@ -128,12 +92,30 @@ t_command	*parse_input(char *input, t_shell *shell)
 	prev = NULL;
 	i = 0;
 	//(void)shell;
+
+	char **input1 = split_tokens(input);
+	pipe_commands = normalize_command(input1);
+	while (pipe_commands[i])
+	{
+		printf("PIP!!!: %s %d\n", pipe_commands[i], i);
+		i++;
+	}
+	i = 0;
+	input = join_tokens_back(pipe_commands);
+	printf("[INPUT2 %s]\n", input);
 	pipe_commands = ft_split_pipes(input);
+	while (pipe_commands[i])
+	{
+		printf("PIP_SPLIT!!!: %s %d\n", pipe_commands[i], i);
+		i++;
+	}
+	i = 0;
 	if (!pipe_commands)
 		return (NULL);
 	while (pipe_commands[i])
 	{
 		cmd = create_command(pipe_commands[i], shell);
+		printf("CMD1111111111: %s\n", cmd->args[i]);
 		if (!cmd)
 		{
 			free_split(pipe_commands);

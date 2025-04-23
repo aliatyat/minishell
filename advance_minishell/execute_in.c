@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:19 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 18:35:38 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:51:11 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ int	execute_command(t_command *cmd, t_shell *shell)
     }
 	// If there's only one command and it's a builtin, execute directly
 	if (!cmd->next && is_builtin(cmd->args[0]))
-		return (execute_builtin(cmd, shell));
+		 execute_builtin(cmd, shell);
 	// Otherwise execute as pipeline
 	return (execute_pipeline(cmd, shell));
 }
