@@ -124,6 +124,7 @@ char	*get_next_token(char **str, char delim)
 	start = *str;
 	while (**str)
 	{
+		printf("`%p\n", *str);
 		if (**str == '\'' && ft_strncmp(*str - 2, "<<", 2) == 0)
 		{
 			printf("inside heredoc\n");
