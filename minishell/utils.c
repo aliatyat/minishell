@@ -75,6 +75,7 @@ int	count_tokens(const char *str, char delim)
 	count = 0;
 	in_quotes = 0;
 	quote_char = 0;
+
 	while (*str)
 	{
 		if (!in_quotes && (*str == '\'' || *str == '"'))
@@ -102,79 +103,102 @@ int	count_tokens(const char *str, char delim)
 	return (count + 1);
 }
 
-char	*get_next_token(const char **str, char delim)
+char	*get_next_token(char **str, char delim)
 {
 	const char	*start;
 	char		*token;
 	int			in_quotes;
 	char		quote_char;
 	int			len;
+	int			preserve_quotes;
 
 	in_quotes = 0;
 	quote_char = 0;
 	len = 0;
+	preserve_quotes = 0;
+
+	
+
 	while (**str && (**str == delim || **str == ' ' || **str == '\t'))
 		(*str)++;
 	start = *str;
 	while (**str)
 	{
-		if (!in_quotes && (**str == '\'' || **str == '"'))
+		printf("`%p\n", *str);
+		if (**str == '\'' && ft_strncmp(*str - 2, "<<", 2) == 0)
+		{
+			printf("inside heredoc\n");
+			preserve_quotes = 1;
+			(*str)++;
+			while (**str && **str != '\'')
+				(*str)++;
+			if (**str == '\'')
+				(*str)++;
+		}
+		else if (!in_quotes && (**str == '\'' || **str == '"'))
 		{
 			quote_char = **str;
 			in_quotes = 1;
 			(*str)++;
 			len++;
-			continue ;
+			continue;
 		}
 		else if (in_quotes && **str == quote_char)
 		{
 			in_quotes = 0;
 			(*str)++;
 			len++;
-			continue ;
+			continue;
 		}
 		if (!in_quotes && **str == delim)
-			break ;
+			break;
 		(*str)++;
 		len++;
 	}
+
 	token = malloc(len + 1);
 	if (!token)
 		return (NULL);
-	 const char *src = start;
-    char *dst = token;
-    in_quotes = 0;
-    quote_char = 0;
-    
-    while (src < *str)
-    {
-        if (!in_quotes && (*src == '\'' || *src == '"'))
-        {
-            quote_char = *src;
-            in_quotes = 1;
-            src++;
-            continue;
-        }
-        if (in_quotes && *src == quote_char)
-        {
-            in_quotes = 0;
-            src++;
-            continue;
-        }
-        
-        *dst++ = *src++;
-    }
-    *dst = '\0';
-    
-    return token;
+
+	const char *src = start;
+	char *dst = token;
+	in_quotes = 0;
+	quote_char = 0;
+
+	while (src < *str)
+	{
+		if (!in_quotes && (*src == '\'' || *src == '"'))
+		{
+			if (!preserve_quotes)
+			{
+				quote_char = *src;
+				in_quotes = 1;
+				src++;
+				continue;
+			}
+		}
+		else if (in_quotes && *src == quote_char)
+		{
+			in_quotes = 0;
+			src++;
+			continue;
+		}
+
+		*dst++ = *src++;
+	}
+	*dst = '\0';
+	printf("token 2  %s\n", token);
+
+	return (token);
 }
 
-char	**ft_split_shell(const char *str, char delim)
+
+char	**ft_split_shell( char *str, char delim)
 {
 	char	**result;
 	int		token_count;
 	int		i;
-
+	printf("start str: %s\n", str);
 	i = 0;
 	if (!str)
 		return (NULL);
@@ -185,7 +209,9 @@ char	**ft_split_shell(const char *str, char delim)
 	i = 0;
 	while (i < token_count)
 	{
+		printf("before result: %s\n",result[i] );
 		result[i] = get_next_token(&str, delim);
+		printf("after result: %s\n",result[i] );
 		if (!result[i])
 		{
 			free_split(result);
