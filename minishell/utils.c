@@ -117,7 +117,7 @@ char	*get_next_token(char **str, char delim)
 	len = 0;
 	preserve_quotes = 0;
 
-	printf("token 1  %s\n", *str);
+	
 
 	while (**str && (**str == delim || **str == ' ' || **str == '\t'))
 		(*str)++;
