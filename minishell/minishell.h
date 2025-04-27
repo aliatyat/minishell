@@ -85,7 +85,7 @@ char					**ft_realloc_strarr(char **arr, size_t new_size);
 int						ft_error(char *cmd, char *msg, int status);
 int						ft_perror(char *cmd, int status);
 void					free_split(char **array);
-char					**ft_split_shell(const char *str, char delim);
+char					**ft_split_shell( char *str, char delim);
 int						is_builtin(char *cmd);
 
 // Redirection
