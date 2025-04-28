@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:59 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 19:47:57 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/27 22:12:07 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ char					**ft_realloc_strarr(char **arr, size_t new_size);
 int						ft_error(char *cmd, char *msg, int status);
 int						ft_perror(char *cmd, int status);
 void					free_split(char **array);
-char					**ft_split_shell( char *str, char delim);
+char					**ft_split_shell(char *str, char delim);
 int						is_builtin(char *cmd);
 
 // Redirection

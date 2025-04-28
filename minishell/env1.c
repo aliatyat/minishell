@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:13 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 19:19:08 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 18:25:11 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,10 @@ char	**update_env_var(char **env, char *name, char *value)
 	int		i;
 
 	if (!env || !name)
-		return (env);
+	return (env);
 	name_len = ft_strlen(name);
 	new_var = ft_strjoin4(name, "=", value);
+	printf("NEW_VAR: [%s] (%s)\n", name, value);
 	if (!new_var)
 		return (env);
 	i = -1;

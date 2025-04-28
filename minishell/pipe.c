@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:03 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 00:43:27 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:50:21 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ t_command	*parse_input(char *input, t_shell *shell)
     }
    if (command[0] == '|')
     {
-		shell->exit_status = 2;
+		exit_status = 2;
         ft_perror("syntax error near unexpected token `|'\n", 2);
         return (NULL);
     }
@@ -108,9 +108,10 @@ t_command	*parse_input(char *input, t_shell *shell)
 	char **input1 = split_tokens(input);
 	pipe_commands = normalize_command(input1);
 	input = join_tokens_back(pipe_commands);
-	// printf("ZAID: %s\n", input);
+	printf("ZAID: %s\n", input);
 	 // First expand variables in the input string
     expanded_input = expand_input(input, shell);
+	printf("EXP: %s\n", expanded_input);
 	pipe_commands = ft_split_pipes(expanded_input);
 	i = 0;
 	while(pipe_commands[i])
@@ -129,6 +130,12 @@ t_command	*parse_input(char *input, t_shell *shell)
 	while (pipe_commands[i])
 	{
 		cmd = create_command(pipe_commands[i], shell);
+		int x = 0;
+		while(cmd->args[x])
+		{
+			printf("COMMAND: %s\n", cmd->args[x]);
+			x++;	
+		}
 		if (!cmd)
 		{
 			free_split(pipe_commands);

@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:09 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 18:16:22 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 18:23:48 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ int	ft_export(t_command *cmd, t_shell *shell)
 	int		status;
 	i = 1;
 	status = 0;
+	
+	
 	if (!cmd->args[1])
 	{
 		print_sorted_env(shell->env, cmd->out_fd);
@@ -42,21 +44,23 @@ int	ft_export(t_command *cmd, t_shell *shell)
 	{
 		equal_sign = ft_strchr(cmd->args[i], '=');
 		equal_new = ft_strchr(shell->input, '=');
-		printf("EXPO1: %s\n", equal_new);
 		if (equal_sign)
 		{
+			
 			*equal_sign = '\0';
 			shell->env = update_env_var(shell->env, cmd->args[i], equal_sign
-					+ 1);
-			*equal_sign = '=';
-			if (!shell->env)
+				+ 1);
+				printf("EQUAL:  %s\n", cmd->args[i]);
+				*equal_sign = '=';
+				
+				if (!shell->env)
 				status = 1;
-		}
-		//equal_new == NULL;
-		if (!equal_new)
-		{
-			printf("asdasd\n");
-			shell->env = update_env_var(shell->env, cmd->args[i], " ");
+			}
+			//equal_new == NULL;
+			if (!equal_new)
+			{
+				printf("asdasd\n");
+				shell->env = update_env_var(shell->env, cmd->args[i], " ");
 			if (!shell->env)
 				status = 1;
 		}

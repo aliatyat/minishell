@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:17 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 19:17:47 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/27 20:14:16 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int	count_tokens(const char *str, char delim)
 	count = 0;
 	in_quotes = 0;
 	quote_char = 0;
-
 	while (*str)
 	{
 		if (!in_quotes && (*str == '\'' || *str == '"'))
@@ -192,13 +191,12 @@ char	*get_next_token(char **str, char delim)
 	return (token);
 }
 
-
-char	**ft_split_shell( char *str, char delim)
+char	**ft_split_shell(char *str, char delim)
 {
 	char	**result;
 	int		token_count;
 	int		i;
-	printf("start str: %s\n", str);
+
 	i = 0;
 	if (!str)
 		return (NULL);
@@ -209,9 +207,7 @@ char	**ft_split_shell( char *str, char delim)
 	i = 0;
 	while (i < token_count)
 	{
-		printf("before result: %s\n",result[i] );
 		result[i] = get_next_token(&str, delim);
-		printf("after result: %s\n",result[i] );
 		if (!result[i])
 		{
 			free_split(result);

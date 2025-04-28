@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:22 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/25 22:31:49 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:07:32 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int	handle_child_process(t_command *cmd, t_shell *shell, char *full_path)
 		free(full_path);
 		exit(EXIT_FAILURE);
 	}
+	//signal(SIGINT, SIG_IGN);
 	execve(full_path, cmd->args, env_array);
 	// if (cmd->in_fd == STDIN_FILENO)
 	// {
@@ -109,6 +110,8 @@ int	execute_external(t_command *cmd, t_shell *shell)
 	}
 	else
 	{
+		signal(SIGINT, SIG_IGN);
+		signal(SIGQUIT, SIG_IGN);
 		free(full_path);
 		return (handle_parent_process(pid, shell));
 	}
@@ -117,7 +120,8 @@ int	execute_external(t_command *cmd, t_shell *shell)
 		dup2(cmd->in_fd, STDIN_FILENO);
 		close(cmd->in_fd); // Close the original file descriptor
 	}
-	return (0);
+	//return (0); THE LAST UPDATA
+	exit (0);
 }
 
 // int	execute_single_command(t_shell *shell, char *cmd_str)

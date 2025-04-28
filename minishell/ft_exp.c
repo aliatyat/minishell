@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:10 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 15:57:40 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:50:39 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,6 @@ char *expand_input(char *input, t_shell *shell)
         }
         printf("fffff %ld\n", ptr - input);
         if (*ptr == '$' && !in_single_quote  && ft_strncmp(ptr - 2, "<<", 2) !=0)
-    
-
-
         {
             ptr++; // Skip $
             if (*ptr == '?')

@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:06 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 19:46:06 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/27 22:11:59 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,12 @@ int	handle_redirection1(t_command *cmd, t_shell *shell)
 		if (ft_strchr(cmd->args[i], '>') || ft_strchr(cmd->args[i], '<'))
 		{
 			temp_split = split_with_redirections(cmd->args[i]);
+			int g = 0;
+			while (temp_split[g])
+			{
+				printf("SPLIT: %s\n", temp_split[g]);
+				g++;
+			}
 			if (!temp_split)
 			{
 				ft_error("minishell", "malloc failed", 1);
@@ -136,7 +142,8 @@ int	handle_redirection1(t_command *cmd, t_shell *shell)
 		}
 		else if (ft_strcmp(cmd->args[i], "<<") == 0 && cmd->args[i + 1])
 		{
-			int tmp_fd = -1;
+			printf("HEREDOC: %s\n", cmd->args[i + 1]);
+			//int tmp_fd = -1;
 			
 			// Handle the heredoc
 			if (handle_heredoc(cmd, cmd->args[i + 1], shell) == -1) 
@@ -145,13 +152,13 @@ int	handle_redirection1(t_command *cmd, t_shell *shell)
 			}
 			
 			
-			if (tmp_fd != -1) 
-			{
-				close(tmp_fd);
-			}
+			// if (tmp_fd != -1) 
+			// {
+			// 	close(tmp_fd);
+			// }
 			
-			// Save the current heredoc fd for potential chaining
-			tmp_fd = cmd->in_fd;
+			// // Save the current heredoc fd for potential chaining
+			// tmp_fd = cmd->in_fd;
 			
 			// For multiple heredocs, the last one will be connected to STDIN
 			if (cmd->args[i + 2] == NULL || ft_strcmp(cmd->args[i + 2], "<<") != 0) 

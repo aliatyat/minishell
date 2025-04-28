@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 16:18:13 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 19:47:32 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:32:40 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,12 @@ int	start_pipe(t_command *current, t_command *next, int *pipefd)
 
 void	execute_child(t_command *cmd, int prev_pipe_in, t_shell *shell)
 {
+	int f = 0;
+	while(cmd->args[f])
+	{
+		printf("CHILD: %s\n", cmd->args[f]);
+		f++;
+	}
 	if (handle_redirection1(cmd, shell) == -1)
 		exit(127) ;
 	
@@ -51,8 +57,8 @@ void	execute_child(t_command *cmd, int prev_pipe_in, t_shell *shell)
 void	parent_cleanup(int *prev_pipe_in, t_command *cmd)
 {
 	(void)prev_pipe_in;
-	// if (*prev_pipe_in != -1)
-	// 	close(*prev_pipe_in);
+	if (*prev_pipe_in != -1)
+		close(*prev_pipe_in);
 	if (cmd->out_fd != STDOUT_FILENO)
 		close(cmd->out_fd);
 }
@@ -85,6 +91,17 @@ int	execute_pipeline(t_command *cmd, t_shell *shell)
 		// printf("SHELL: %s CUR: %s \n", shell->commands->args[i] , current->args[0]);
 		// i++;
 		next = current->next;
+		int x = 0;
+		int f = 0;
+		while (current->args[x])
+		{
+			if (current->args[x] && ft_strncmp(current->args[x], "<<", 2) == 0)
+			{
+				f =1;
+			}
+			
+			x++;
+		}
 		if (start_pipe(current, next, pipefd))
 			return (1);
 		pid = fork();
@@ -94,8 +111,17 @@ int	execute_pipeline(t_command *cmd, t_shell *shell)
 			execute_child(current, prev_pipe_in, shell);
 		else if (pid != 0)
 		{
-			if ( shell->commands->args[i] && ft_strncmp(shell->commands->args[i], "<<", 2) == 0)
+			int j = 0;
+			signal(SIGINT, SIG_IGN);
+			signal(SIGQUIT, SIG_IGN);
+			if (f)
+			{
+				
 				wait_for_children(shell);
+
+			}
+				
+			
 			parent_cleanup(&prev_pipe_in, current);
 		}
 		if (next != NULL)

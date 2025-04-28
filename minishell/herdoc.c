@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:44 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 20:06:32 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/27 22:11:49 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,7 @@ int	handle_heredoc(t_command *cmd, char *delimiter, t_shell *shell)
 		else
 		{
 			line = expand_here(line, shell);
-		//ft_echo(cmd, NULL);
-		write(pipe_fd[1], line, ft_strlen(line));
+		    write(pipe_fd[1], line, ft_strlen(line));
 		}	
 		free(line);
 	}

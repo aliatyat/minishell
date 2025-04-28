@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:19 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 19:55:46 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:49:32 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,21 +125,20 @@ int	execute_command(t_command *cmd, t_shell *shell)
 		return (0);
 	while(shell->input[i])
 	{
-			printf("HHHHHH   [%c]\n",shell->input[i]);
-			if (shell->input[i] == '|' || shell->input[i] == '>' || shell->input[i] == '<')
-			{
-				x = 1;
-				break;
-			}
-			i++;
+		if (shell->input[i] == '|' || shell->input[i] == '>' || shell->input[i] == '<')
+		{
+			x = 1;
+			break;
+		}
+		i++;
 	}
-	 // Check for malformed commands with unclosed quotes
-	 printf("hello %d\n", x);
+	// Check for malformed commands with unclosed quotes
+	printf("hello %d\n", x);
 	// If there's only one command and it's a builtin, execute directly
 	if (cmd->next == NULL)
-		//printf("HHHHHH\n");
+	//printf("HHHHHH\n");
 	if ( !cmd->next && ft_strcmp(cmd->args[0], "cd") == 0)
-		return(execute_builtin(cmd, shell));
+	return(execute_builtin(cmd, shell));
 	else if (!cmd->next && (is_builtin(cmd->args[0]) && x == 0 ))
 	{
 		execute_builtin(cmd, shell);
@@ -147,6 +146,14 @@ int	execute_command(t_command *cmd, t_shell *shell)
 	}
 	//else
 	// Otherwise execute as pipeline
+	int z = 0;
+	while (cmd->args[z])
+	{
+		
+		printf("HHHHHH   [%s]\n",cmd->args[z]);
+			
+		z++;
+	}
 	return execute_pipeline(cmd, shell);
 	//return 0;
 }
