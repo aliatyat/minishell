@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 17:12:50 by alalauty          #+#    #+#             */
-/*   Updated: 2024/09/02 17:13:49 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/29 16:35:31 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	len2 = ft_strlen(s2);
 	result = (char *)malloc(len1 + len2 + 1);
 	if (!result)
+	{
+		free (result);
 		return (NULL);
+	}
 	i = 0;
 	copy_str(result, s1, &i);
 	copy_str(result, s2, &i);

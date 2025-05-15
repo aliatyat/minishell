@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 17:33:36 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/19 20:29:42 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:24:22 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,81 +14,102 @@
 
 char	**remove_env_var(char **env, char *var)
 {
+	size_t	var_len;
+	int		count;
+	char	**new_env;
+
+	var_len = ft_strlen(var);
+	count = count_env_vars(env);
+	new_env = create_filtered_env(env, var, var_len, count);
+	if (!new_env)
+		return (NULL);
+	free_split(env);
+	return (new_env);
+}
+
+char	**cpy_env(char **env)
+{
+	char	**copy;
 	int		count;
 	int		i;
-	int		j;
-	char	**new_env;
-	size_t	var_len;
 
 	count = 0;
 	i = 0;
-	j = 0;
-	var_len = ft_strlen(var);
 	while (env[count])
 		count++;
-	new_env = malloc((count + 1) * sizeof(char *));
-	if (!new_env)
+	copy = malloc((count + 1) * sizeof(char *));
+	if (!copy)
 		return (NULL);
-	while (env[i])
+	while (i < count)
 	{
-		if (ft_strncmp(env[i], var, var_len) != 0 || env[i][var_len] != '=')
+		copy[i] = ft_strdup(env[i]);
+		if (!copy[i])
 		{
-			new_env[j] = ft_strdup(env[i]);
-			if (!new_env[j])
+			while (i-- > 0)
+				free(copy[i]);
+			free(copy);
+			return (NULL);
+		}
+		i++;
+	}
+	copy[count] = NULL;
+	return (copy);
+}
+
+void	sort_env(char **env, int count)
+{
+	int		i;
+	int		j;
+	char	*temp;
+
+	i = 0;
+	while (i < count - 1)
+	{
+		j = 0;
+		while (j < count - i - 1)
+		{
+			if (ft_strcmp(env[j], env[j + 1]) > 0)
 			{
-				while (j-- > 0)
-					free(new_env[j]);
-				free(new_env);
-				return (NULL);
+				temp = env[j];
+				env[j] = env[j + 1];
+				env[j + 1] = temp;
 			}
 			j++;
 		}
 		i++;
 	}
-	new_env[j] = NULL;
-	free_split(env);
-	return (new_env);
+}
+
+void	print_env_with_prefix(char **env, int fd)
+{
+	int	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strchr(env[i], '='))
+		{
+			ft_putstr_fd("declare -x ", fd);
+			ft_putendl_fd(env[i], fd);
+		}
+		i++;
+	}
 }
 
 void	print_sorted_env(char **env, int fd)
 {
-	int count;
-	char **sorted_env;
-	int	i; 
-	int	j;
-	char *temp;
+	int		count;
+	char	**sorted_env;
 
 	count = 0;
+	if (!env)
+		return ;
 	while (env[count])
 		count++;
-
-	sorted_env = copy_env(env);
+	sorted_env = cpy_env(env);
 	if (!sorted_env)
 		return ;
-
-	// Simple bubble sort
-	for (i = 0; i < count - 1; i++)
-	{
-		for (j = 0; j < count - i - 1; j++)
-		{
-			if (ft_strcmp(sorted_env[j], sorted_env[j + 1]) > 0)
-			{
-				temp = sorted_env[j];
-				sorted_env[j] = sorted_env[j + 1];
-				sorted_env[j + 1] = temp;
-			}
-		}
-	}
-	i = 0;
-	while (sorted_env[i])
-	{
-		if (ft_strchr(sorted_env[i], '='))
-		{
-			ft_putstr_fd("declare -x ", fd);
-			ft_putendl_fd(sorted_env[i], fd);
-		}
-		i++;
-	}
-	//close(fd);
+	sort_env(sorted_env, count);
+	print_env_with_prefix(sorted_env, fd);
 	free_split(sorted_env);
 }

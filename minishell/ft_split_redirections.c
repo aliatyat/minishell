@@ -6,256 +6,96 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:41 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 17:20:29 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:25:05 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_strndup(char *s, size_t n)
+char	*extract_token(char **ptr)
 {
-	char	*new;
-	size_t	len;
+	char	*start;
+	char	quote;
 
-	len = ft_strlen(s);
-	// Use whichever is smaller: the string length or n
-	if (n < len)
-		len = n;
-	new = malloc(len + 1); // +1 for null terminator
-	if (!new)
-		return (NULL);
-	ft_memcpy(new, s, len); // Copy up to n characters
-	new[len] = '\0';        // Always null-terminate
-	return (new);
+	start = *ptr;
+	quote = 0;
+	while (**ptr && (quote || (**ptr != ' ' && **ptr != '\t' && **ptr != '>'
+				&& **ptr != '<')))
+	{
+		if (**ptr == '"' || **ptr == '\'')
+		{
+			if (quote == 0)
+				quote = **ptr;
+			else if (quote == **ptr)
+				quote = 0;
+		}
+		(*ptr)++;
+	}
+	return (ft_strndup(start, *ptr - start));
 }
 
-// char	**remove_null_args(char **args)
-// {
-// 	int		count;
-// 	int		i;
-// 	char	**new_args;
-// 	int		j;
+static char	**init_token_array(void)
+{
+	char	**tokens;
+	int		i;
 
-// 	count = 0;
-// 	i = 0;
-// 	while (args[count])
-// 		count++;
-// 	new_args = malloc((count + 1) * sizeof(char *));
-// 	if (!new_args)
-// 		return (NULL);
-// 	j = 0;
-// 	for (i = 0; i < count; i++)
-// 	{
-// 		if (args[i])
-// 		{
-// 			new_args[j] = args[i];
-// 			j++;
-// 		}
-// 	}
-// 	new_args[j] = NULL;
-// 	free(args);
-// 	return (new_args);
-// }
+	tokens = malloc(100 * sizeof(char *));
+	if (!tokens)
+		return (NULL);
+	i = 0;
+	while (i < 100)
+		tokens[i++] = NULL;
+	return (tokens);
+}
+
+static int	add_token(char **tokens, int *i, char *token)
+{
+	if (!token)
+	{
+		free_split(tokens);
+		return (-1);
+	}
+	tokens[(*i)++] = token;
+	return (0);
+}
+
+static int	handle_next_token(char **ptr, char **tokens, int *i)
+{
+	char	*token;
+
+	if (**ptr == '>' || **ptr == '<')
+	{
+		if ((*ptr)[1] == **ptr)
+			token = handle_redirection_token(ptr, 2);
+		else
+			token = handle_redirection_token(ptr, 1);
+	}
+	else if (**ptr == '"' || **ptr == '\'')
+		token = handle_quoted_string(ptr);
+	else
+		token = extract_token(ptr);
+	return (add_token(tokens, i, token));
+}
 
 char	**split_with_redirections(char *input)
 {
 	char	*ptr;
 	int		i;
-	int		in_quotes;
-	char	*start;
 	char	**tokens;
 
-	//char	quote_char;
-	printf("split\n");
-	tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
-	ptr = input;
-	i = 0;
-	in_quotes = 0;
-	//quote_char = 0;
+	tokens = init_token_array();
 	if (!tokens)
 		return (NULL);
+	ptr = input;
+	i = 0;
 	while (*ptr)
 	{
-		// Skip whitespace unless in quotes
-		if (!in_quotes && (*ptr == ' ' || *ptr == '\t'))
-		{
-			ptr++;
-			continue ;
-		}
-		// Handle quotes
-		// if (*ptr == '\'' || *ptr == '"')
-		// {
-		// 	if (!in_quotes)
-		// 	{
-		// 		quote_char = *ptr;
-		// 		in_quotes = 1;
-		// 		ptr++;
-		// 		continue ;
-		// 	}
-		// 	else if (*ptr == quote_char)
-		// 	{
-		// 		in_quotes = 0;
-		// 		ptr++;
-		// 		continue ;
-		// 	}
-		// }
-		// Handle redirections (only outside quotes)
-		if (!in_quotes && (*ptr == '>' || *ptr == '<'))
-		{
-			if (ptr[1] == *ptr) // >> or <<
-			{
-				tokens[i++] = ft_strndup(ptr, 2);
-				ptr += 2;
-			}
-			else // > or <
-			{
-				printf("split\n");
-				tokens[i++] = ft_strndup(ptr, 1);
-				ptr += 1;
-			}
-			continue ;
-		}
-		// Normal token
-		start = ptr;
-		while (*ptr && (in_quotes || (*ptr != ' ' && *ptr != '\t' && *ptr != '>'
-					&& *ptr != '<')))
-			ptr++;
-		tokens[i++] = ft_strndup(start, ptr - start);
+		ptr = skip_whitespace(ptr);
+		if (!*ptr)
+			break ;
+		if (handle_next_token(&ptr, tokens, &i) == -1)
+			return (NULL);
 	}
 	tokens[i] = NULL;
 	return (tokens);
 }
-
-char	**split_ex(char *input)
-{
-	char	*ptr;
-	int		i;
-	int		in_quotes;
-	char	*start;
-	char	**tokens;
-
-	//char	quote_char;
-	printf("split\n");
-	tokens = malloc(100 * sizeof(char *)); // Adjust size as needed
-	ptr = input;
-	i = 0;
-	in_quotes = 0;
-	//quote_char = 0;
-	if (!tokens)
-		return (NULL);
-	while (*ptr)
-	{
-		// Skip whitespace unless in quotes
-		if (!in_quotes && (*ptr == ' ' || *ptr == '\t'))
-		{
-			ptr++;
-			continue ;
-		}
-		// Handle quotes
-		// if (*ptr == '\'' || *ptr == '"')
-		// {
-		// 	if (!in_quotes)
-		// 	{
-		// 		quote_char = *ptr;
-		// 		in_quotes = 1;
-		// 		ptr++;
-		// 		continue ;
-		// 	}
-		// 	else if (*ptr == quote_char)
-		// 	{
-		// 		in_quotes = 0;
-		// 		ptr++;
-		// 		continue ;
-		// 	}
-		// }
-		// Handle redirections (only outside quotes)
-		if (!in_quotes && (*ptr == '$'))
-		{
-			if (ptr[1] == *ptr) // >> or <<
-			{
-				tokens[i++] = ft_strndup(ptr, 2);
-				ptr += 2;
-			}
-			else // > or <
-			{
-				printf("split\n");
-				tokens[i++] = ft_strndup(ptr, 1);
-				ptr += 1;
-			}
-			continue ;
-		}
-		// Normal token
-		start = ptr;
-		while (*ptr && (in_quotes || (*ptr != ' ' && *ptr != '\t'
-					&& *ptr != '$')))
-			ptr++;
-		tokens[i++] = ft_strndup(start, ptr - start);
-	}
-	tokens[i] = NULL;
-	return (tokens);
-}
-// t_command	*create_command(char *input)
-// {
-// 	t_command	*cmd;
-// 	char		**tokens;
-// 	int			i;
-
-// 	i = 0;
-// 	//char *ptr = input;
-// 	cmd = malloc(sizeof(t_command));
-// 	if (!cmd)
-// 		return (NULL);
-// 	ft_memset(cmd, 0, sizeof(t_command));
-// 	cmd->in_fd = STDIN_FILENO;
-// 	cmd->out_fd = STDOUT_FILENO;
-// 	// cmd->pipefd[0] = -1;
-// 	// cmd->pipefd[1] = -1;
-// 	// First pass: split including redirection symbols as separate tokens
-// 	tokens = split_with_redirections(input);
-// 	if (!tokens)
-// 	{
-// 		free(cmd);
-// 		return (NULL);
-// 	}
-// 	// Second pass: process redirections
-// 	i = 0;
-// 	while (tokens[i])
-// 	{
-// 		if (ft_strcmp(tokens[i], ">") == 0 && tokens[i + 1])
-// 		{
-// 			cmd->out_fd = open(tokens[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
-// 					0644);
-// 			free(tokens[i]);
-// 			free(tokens[i + 1]);
-// 			tokens[i] = NULL;
-// 			tokens[i + 1] = NULL;
-// 			i += 2;
-// 		}
-// 		else if (ft_strcmp(tokens[i], ">>") == 0 && tokens[i + 1])
-// 		{
-// 			cmd->out_fd = open(tokens[i + 1], O_WRONLY | O_CREAT | O_APPEND,
-// 					0644);
-// 			free(tokens[i]);
-// 			free(tokens[i + 1]);
-// 			tokens[i] = NULL;
-// 			tokens[i + 1] = NULL;
-// 			i += 2;
-// 		}
-// 		else if (ft_strcmp(tokens[i], "<") == 0 && tokens[i + 1])
-// 		{
-// 			cmd->in_fd = open(tokens[i + 1], O_RDONLY);
-// 			free(tokens[i]);
-// 			free(tokens[i + 1]);
-// 			tokens[i] = NULL;
-// 			tokens[i + 1] = NULL;
-// 			i += 2;
-// 		}
-// 		else
-// 		{
-// 			i++;
-// 		}
-// 	}
-// 	// Compact the arguments array (remove NULLs)
-// 	cmd->args = remove_null_args(tokens);
-// 	return (cmd);
-// }

@@ -1,37 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtok.c                                        :+:      :+:    :+:   */
+/*   heredoc3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 16:31:36 by alalauty          #+#    #+#             */
-/*   Updated: 2025/05/05 19:03:35 by alalauty         ###   ########.fr       */
+/*   Created: 2025/05/11 20:35:20 by alalauty          #+#    #+#             */
+/*   Updated: 2025/05/11 20:39:44 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strtok(char *restrict str, const char *restrict delim)
+int	handle_quotes_here(char c, int *in_squote, int *in_dquote)
 {
-	static char	*next;
-	char		*token;
-
-	if (str)
-		next = str;
-	if (!next)
-		return (NULL);
-	while (*next && ft_strchr(delim, *next))
-		next++;
-	if (!*next)
-		return (NULL);
-	token = next;
-	while (*next && !ft_strchr(delim, *next))
-		next++;
-	if (*next)
+	if (c == '\'' && !(*in_dquote))
 	{
-		*next = '\0';
-		next++;
+		*in_squote = !(*in_squote);
+		return (1);
 	}
-	return (token);
+	if (c == '"' && !(*in_squote))
+	{
+		*in_dquote = !(*in_dquote);
+		return (1);
+	}
+	return (0);
+}
+
+void	write_into_pipe(int fd, char *line)
+{
+	write(fd, line, ft_strlen(line));
+	write(fd, "\n", 1);
+	free(line);
 }

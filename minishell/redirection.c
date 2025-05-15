@@ -6,178 +6,17 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:06 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/27 22:11:59 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 20:31:26 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_redirection1(t_command *cmd, t_shell *shell)
+void	rebuild_args(t_command *cmd)
 {
-	int		i;
-	int		j;
-	char	**new_args;
-	char	**temp_split;
+	int	i;
+	int	j;
 
-	i = 0;
-	j = 0;
-	new_args = NULL;
-	temp_split = NULL;
-	/* PHASE 1: Split merged redirections (e.g., "ls>out" -> "ls", ">",
-			"out") */
-	while (cmd->args[i])
-	{
-		if (ft_strchr(cmd->args[i], '>') || ft_strchr(cmd->args[i], '<'))
-		{
-			temp_split = split_with_redirections(cmd->args[i]);
-			int g = 0;
-			while (temp_split[g])
-			{
-				printf("SPLIT: %s\n", temp_split[g]);
-				g++;
-			}
-			if (!temp_split)
-			{
-				ft_error("minishell", "malloc failed", 1);
-				return (-1);
-			}
-			// Allocate space for new args (+2 for potential split tokens)
-			new_args = realloc(new_args, (j + 3) * sizeof(char *));
-			if (!new_args)
-			{
-				free_2d_array(temp_split);
-				return (-1);
-			}
-			// Copy split tokens
-			if (temp_split[0])
-				new_args[j++] = temp_split[0];
-			if (temp_split[1])
-				new_args[j++] = temp_split[1];
-			if (temp_split[2])
-				new_args[j++] = temp_split[2];
-			free(temp_split);
-		}
-		else
-		{
-			new_args = realloc(new_args, (j + 1) * sizeof(char *));
-			if (!new_args)
-				return (-1);
-			new_args[j++] = ft_strdup(cmd->args[i]);
-		}
-		i++;
-	}
-	new_args = realloc(new_args, (j + 1) * sizeof(char *));
-	if (!new_args)
-		return (-1);
-	new_args[j] = NULL;
-	// Replace old args with normalized ones
-	free_2d_array(cmd->args);
-	cmd->args = new_args;
-	/* PHASE 2: Process redirections */
-	i = 0;
-	while (cmd->args[i])
-	{
-		if (ft_strcmp(cmd->args[i], ">") == 0 && cmd->args[i + 1])
-		{
-			cmd->out_fd = open(cmd->args[i + 1], O_WRONLY | O_CREAT | O_TRUNC,
-					0644);
-			if (cmd->out_fd == -1)
-			{
-				ft_perror("minishell", 1);
-				return (-1);
-			}
-			free(cmd->args[i]);
-			free(cmd->args[i + 1]);
-			cmd->args[i] = cmd->args[i + 1] = NULL;
-			i += 2;
-		}
-		else if (ft_strcmp(cmd->args[i], ">>") == 0 && cmd->args[i + 1])
-		{
-			cmd->out_fd = open(cmd->args[i + 1], O_WRONLY | O_CREAT | O_APPEND,
-					0644);
-			if (cmd->out_fd == -1)
-			{
-				ft_perror("minishell", 1);
-				return (-1);
-			}
-			free(cmd->args[i]);
-			free(cmd->args[i + 1]);
-			cmd->args[i] = cmd->args[i + 1] = NULL;
-			i += 2;
-		}
-		else if (ft_strcmp(cmd->args[i], "<") == 0 && cmd->args[i + 1])
-		{
-			
-			if (cmd->in_fd != STDIN_FILENO)
-    			close(cmd->in_fd);
-				
-			cmd->in_fd = open(cmd->args[i + 1], O_RDONLY);
-			
-			if (cmd->in_fd == -1)
-			{
-				ft_perror(cmd->args[i + 1], 1);  // Now shows which file failed
-				close (cmd->in_fd);
-				return (-1);
-			}
-			//dup2(cmd->in_fd, STDIN_FILENO);
-		//	int x = 0;
-			//char *first = cmd->args[0];
-			// if (ft_strcmp(cmd->args[0], "<") == 0)
-			// {
-			// 	cmd->args[0] = cmd->args[2];
-			// 	cmd->args[2] = NULL;
-			// }
-			
-			
-			// else
-			// {
-				free(cmd->args[i]);
-				free(cmd->args[i + 1]);
-				cmd->args[i] = cmd->args[i + 1] = NULL;
-			//}
-			
-			//cmd->args[i] = cmd->args[3] = NULL;
-			i += 2;
-			dup2(cmd->in_fd, STDIN_FILENO);
-		}
-		else if (ft_strcmp(cmd->args[i], "<<") == 0 && cmd->args[i + 1])
-		{
-			printf("HEREDOC: %s\n", cmd->args[i + 1]);
-			//int tmp_fd = -1;
-			
-			// Handle the heredoc
-			if (handle_heredoc(cmd, cmd->args[i + 1], shell) == -1) 
-			{
-				return (-1);
-			}
-			
-			
-			// if (tmp_fd != -1) 
-			// {
-			// 	close(tmp_fd);
-			// }
-			
-			// // Save the current heredoc fd for potential chaining
-			// tmp_fd = cmd->in_fd;
-			
-			// For multiple heredocs, the last one will be connected to STDIN
-			if (cmd->args[i + 2] == NULL || ft_strcmp(cmd->args[i + 2], "<<") != 0) 
-			{
-				dup2(cmd->in_fd, STDIN_FILENO);
-				close(cmd->in_fd);
-			}
-    
-			free(cmd->args[i]);
-			free(cmd->args[i + 1]);
-			cmd->args[i] = cmd->args[i + 1] = NULL;
-			i += 2;
-		}
-		else
-		{
-			i++;
-		}
-	}
-	/* PHASE 3: Compact args (remove NULLs) */
 	i = 0;
 	j = 0;
 	while (cmd->args[i])
@@ -193,22 +32,92 @@ int	handle_redirection1(t_command *cmd, t_shell *shell)
 		i++;
 	}
 	cmd->args[j] = NULL;
+}
+
+int	redirection_tokens(char ***new_args, char **temp_split, int *j)
+{
+	*new_args = ft_realloc(*new_args, (*j) * sizeof(char *), ((*j) + 3)
+			* sizeof(char *));
+	if (!*new_args)
+	{
+		free_2d_array(temp_split);
+		free_2d_array(*new_args);
+		return (-1);
+	}
+	if (temp_split[0])
+		(*new_args)[(*j)++] = temp_split[0];
+	if (temp_split[1])
+		(*new_args)[(*j)++] = temp_split[1];
+	if (temp_split[2])
+	{
+		(*new_args)[(*j)++] = temp_split[2];
+		temp_split[2] = NULL;
+	}
+	free(temp_split);
 	return (0);
 }
-int	has_redirection(char *cmd)
-{
-	int i = 0;
 
-	while (cmd[i])
+static int	split_redirection(t_command *cmd, char ***new_args, int *j, int i)
+{
+	char	**temp_split;
+
+	if (ft_strchr(cmd->args[i], '>') || ft_strchr(cmd->args[i], '<'))
 	{
-		if (cmd[i] == '>' || cmd[i] == '<')
+		temp_split = split_with_redirections(cmd->args[i]);
+		if (!temp_split)
+			return (-1);
+		if (redirection_tokens(new_args, temp_split, j) == -1)
+			return (-1);
+	}
+	else
+	{
+		*new_args = ft_realloc(*new_args, (*j) * sizeof(char *),
+				((*j) + 1) * sizeof(char *));
+		if (!*new_args)
+			return (-1);
+		(*new_args)[(*j)++] = ft_strdup(cmd->args[i]);
+		if (!(*new_args)[(*j) - 1])
 		{
-			if (cmd[i] == '>' && cmd[i + 1] == '>')
-				return (1);
-			return (1);
+			free_2d_array(*new_args);
+			return (-1);
 		}
+	}
+	return (0);
+}
+
+static int	extract_redirections(t_command *cmd, char ***new_args)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	*new_args = NULL;
+	while (cmd->args[i])
+	{
+		if (split_redirection(cmd, new_args, &j, i) == -1)
+			return (-1);
 		i++;
 	}
+	*new_args = ft_realloc(*new_args, j * sizeof(char *),
+			(j + 1) * sizeof(char *));
+	if (!*new_args)
+		return (-1);
+	(*new_args)[j] = NULL;
+	return (0);
+}
 
+int	handle_redirection1(t_command *cmd, t_shell *shell)
+{
+	char	**new_args;
+
+	if (extract_redirections(cmd, &new_args) == -1)
+		return (-1);
+	if (cmd->args)
+		free_2d_array(cmd->args);
+	cmd->args = new_args;
+	if (process_redirections(cmd, shell) == -1)
+		return (-1);
+	rebuild_args(cmd);
 	return (0);
 }

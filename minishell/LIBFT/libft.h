@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 16:22:52 by alalauty          #+#    #+#             */
-/*   Updated: 2025/02/13 00:46:00 by marvin           ###   ########.fr       */
+/*   Updated: 2025/05/08 17:14:36 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ int					ft_isdigit(int c);
 int					ft_isascii(int c);
 int					ft_isalpha(int c);
 int					ft_isalnum(int c);
+int					ft_isspace(int c);
 int					ft_atoi(const char *nptr);
 char				*ft_strchr(const char *s, int c);
 char				*ft_strnstr(const char *haystack, const char *needle,
@@ -74,5 +75,9 @@ char				*ft_strnstr(const char *haystack, const char *needle,
 char				*ft_strrchr(const char *s, int c);
 char				*ft_strtok(char *restrict str, const char *restrict delim);
 char				*ft_strstr(const char *haystack, const char *needle);
+char				*ft_strncpy(char *dest, char *src, unsigned int n);
+void				*ft_realloc(void *ptr, size_t old_size, size_t new_size);
+char				*ft_strjoin_gnl(char *s1, char *s2, int *eol_loc);
+void				ft_strlcpy_gnl(char *dst, const char *src, size_t dstsize);
 
 #endif

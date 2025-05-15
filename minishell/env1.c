@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:13 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/28 18:25:11 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:23:44 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ char	*get_env_value(char **env, char *name)
 {
 	size_t	name_len;
 	int		i;
+	char	*xx;
 
 	if (!env || !name)
 		return (NULL);
@@ -51,37 +52,36 @@ char	*get_env_value(char **env, char *name)
 	i = -1;
 	while (env[++i])
 	{
-		if (ft_strncmp(env[i], name, name_len) == 0
-			&& env[i][name_len] == '=')
-			return (env[i] + name_len + 1);
+		if (ft_strncmp(env[i], name, name_len) == 0 && env[i][name_len] == '=')
+		{
+			xx = ft_strtrim(env[i] + name_len + 1, "\"");
+			return (xx);
+		}
 	}
 	return (NULL);
 }
 
-char	**update_env_var(char **env, char *name, char *value)
+int	update_existing_env_var(char **env, char *name, char *new_var)
 {
-	char	*new_var;
 	size_t	name_len;
 	int		i;
 
-	if (!env || !name)
-	return (env);
 	name_len = ft_strlen(name);
-	new_var = ft_strjoin4(name, "=", value);
-	printf("NEW_VAR: [%s] (%s)\n", name, value);
-	if (!new_var)
-		return (env);
 	i = -1;
 	while (env[++i])
 	{
-		if (ft_strncmp(env[i], name, name_len) == 0
-			&& env[i][name_len] == '=')
+		if (ft_strncmp(env[i], name, name_len) == 0 && env[i][name_len] == '=')
 		{
 			free(env[i]);
 			env[i] = new_var;
-			return (env);
+			return (1);
 		}
 	}
+	return (0);
+}
+
+char	**add_new_env_var(char **env, char *new_var, int i)
+{
 	env = ft_realloc_strarr(env, i + 2);
 	if (!env)
 	{
@@ -93,31 +93,20 @@ char	**update_env_var(char **env, char *name, char *value)
 	return (env);
 }
 
-char	**remove_null_args(char **args)
+char	**update_env_var(char **env, char *name, char *value)
 {
-	int		count;
+	char	*new_var;
 	int		i;
-	char	**new_args;
-	int		j;
 
-	count = 0;
+	if (!env || !name)
+		return (env);
+	new_var = ft_strjoin4(name, "=", value);
+	if (!new_var)
+		return (env);
+	if (update_existing_env_var(env, name, new_var))
+		return (env);
 	i = 0;
-	while (args[count])
-		count++;
-	new_args = malloc((count + 1) * sizeof(char *));
-	if (!new_args)
-		return (NULL);
-	j = 0;
-	for (i = 0; i < count; i++)
-	{
-		if (args[i])
-		{
-			new_args[j] = args[i];
-			j++;
-		}
-	}
-	new_args[j] = NULL;
-	free(args);
-	return (new_args);
+	while (env[i])
+		i++;
+	return (add_new_env_var(env, new_var, i));
 }
-

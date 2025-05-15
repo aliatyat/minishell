@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:16 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 16:27:17 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:23:57 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,11 @@ char	**get_paths_from_env(char **env)
 	return (paths);
 }
 
-/* Find full path of command */
-char	*find_path(char **env, char *cmd)
+char	*search_path_in_env(char **paths, char *cmd)
 {
-	char	**paths;
 	char	*full_path;
 	int		i;
 
-	if (ft_strchr(cmd, '/'))
-	{
-		if (access(cmd, X_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
-	paths = get_paths_from_env(env);
 	if (!paths)
 		return (NULL);
 	i = 0;
@@ -50,7 +41,10 @@ char	*find_path(char **env, char *cmd)
 	{
 		full_path = ft_strjoin3(paths[i], "/", cmd);
 		if (!full_path)
-			break ;
+		{
+			free_split(paths);
+			return (NULL);
+		}
 		if (access(full_path, X_OK) == 0)
 		{
 			free_split(paths);
@@ -74,12 +68,12 @@ void	close_all_pipes(t_command *cmd)
 		if (tmp->in_fd != STDIN_FILENO)
 		{
 			close(tmp->in_fd);
-			tmp->in_fd = STDIN_FILENO; // Reset to avoid double close
+			tmp->in_fd = STDIN_FILENO;
 		}
 		if (tmp->out_fd != STDOUT_FILENO)
 		{
 			close(tmp->out_fd);
-			tmp->out_fd = STDOUT_FILENO; // Reset to avoid double close
+			tmp->out_fd = STDOUT_FILENO;
 		}
 		tmp = tmp->next;
 	}
@@ -89,8 +83,8 @@ void	close_all_pipes(t_command *cmd)
 char	**env_to_array(char **env)
 {
 	int		count;
-	char	**array;
 	int		i;
+	char	**array;
 
 	count = 0;
 	while (env[count])

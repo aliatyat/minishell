@@ -3,32 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/01 17:18:47 by alalauty          #+#    #+#             */
-/*   Updated: 2024/09/01 17:32:14 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/04/30 22:13:20 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static char	*ft_strncpy(char *dest, char *src, unsigned int n)
-{
-	unsigned int	i;
-
-	i = 0;
-	while (src[i] != '\0' && i < n)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	while (i < n)
-	{
-		dest[i] = '\0';
-		i++;
-	}
-	return (dest);
-}
 
 static int	is_in_set(char c, const char *set)
 {
@@ -57,7 +39,10 @@ char	*ft_strtrim(char const *s1, char const *set)
 		end--;
 	trimmed_str = (char *)malloc(end - start + 1);
 	if (!trimmed_str)
+	{
+		free(trimmed_str);
 		return (NULL);
+	}
 	ft_strncpy(trimmed_str, (char *)s1 + start, end - start);
 	trimmed_str[end - start] = '\0';
 	return (trimmed_str);

@@ -1,37 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtok.c                                        :+:      :+:    :+:   */
+/*   ft_isspace.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 16:31:36 by alalauty          #+#    #+#             */
-/*   Updated: 2025/05/05 19:03:35 by alalauty         ###   ########.fr       */
+/*   Created: 2025/05/01 16:10:50 by alalauty          #+#    #+#             */
+/*   Updated: 2025/05/05 19:06:14 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-char	*ft_strtok(char *restrict str, const char *restrict delim)
+int	ft_isspace(int c)
 {
-	static char	*next;
-	char		*token;
-
-	if (str)
-		next = str;
-	if (!next)
-		return (NULL);
-	while (*next && ft_strchr(delim, *next))
-		next++;
-	if (!*next)
-		return (NULL);
-	token = next;
-	while (*next && !ft_strchr(delim, *next))
-		next++;
-	if (*next)
-	{
-		*next = '\0';
-		next++;
-	}
-	return (token);
+	if (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
+		|| c == '\r')
+		return (1);
+	return (0);
 }

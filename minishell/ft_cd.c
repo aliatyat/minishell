@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:28 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 01:14:30 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/11 21:50:16 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,14 @@ int	ft_cd(t_command *cmd, t_shell *shell)
 	if (!getcwd(old_pwd, sizeof(old_pwd)))
 		return (ft_perror("cd 1", 1));
 	if (chdir(target_dir) != 0)
-		return (ft_perror("cd 2", 1));
-		
+	{
+		shell->exit_status = 1;
+		ft_perror("cd 2", 1);
+		return (shell->exit_status);
+	}
 	if (!getcwd(new_pwd, sizeof(new_pwd)))
 		return (ft_perror("cd 3", 1));
 	shell->env = update_env_var(shell->env, "OLDPWD", old_pwd);
 	shell->env = update_env_var(shell->env, "PWD", new_pwd);
-	return (0);
+	return (shell->exit_status);
 }

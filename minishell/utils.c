@@ -6,64 +6,28 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:28:17 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/27 20:14:16 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:26:10 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*ft_strjoin3(const char *s1, const char *s2, const char *s3)
+int	handle_quotes(const char **str, int *in_quotes, char *quote_char)
 {
-	char	*tmp;
-	char	*result;
-
-	tmp = ft_strjoin(s1, s2);
-	if (!tmp)
-		return (NULL);
-	result = ft_strjoin(tmp, s3);
-	free(tmp);
-	return (result);
-}
-
-char	*ft_strjoin4(const char *s1, const char *s2, const char *s3)
-{
-	char	*tmp;
-	char	*result;
-
-	tmp = ft_strjoin(s1, s2);
-	if (!tmp)
-		return (NULL);
-	char *q =	ft_strjoin("\"", s3);
-	if (!q)
-		return (NULL);
-	result = ft_strjoin(tmp, q);
-	result = ft_strjoin(result, "\"");
-	free(tmp);
-	free (q);
-	return (result);
-}
-
-char	**ft_realloc_strarr(char **arr, size_t new_size)
-{
-	char	**new;
-	size_t	i;
-
-	new = malloc(new_size * sizeof(char *));
-	if (!new)
-		return (NULL);
-	i = 0;
-	if (arr)
+	if (!*in_quotes && (**str == '\'' || **str == '"'))
 	{
-		while (arr[i] && i < new_size - 1)
-		{
-			new[i] = arr[i];
-			i++;
-		}
-		free(arr);
+		*quote_char = **str;
+		*in_quotes = 1;
+		(*str)++;
+		return (1);
 	}
-	while (i < new_size)
-		new[i++] = NULL;
-	return (new);
+	else if (*in_quotes && **str == *quote_char)
+	{
+		*in_quotes = 0;
+		(*str)++;
+		return (1);
+	}
+	return (0);
 }
 
 int	count_tokens(const char *str, char delim)
@@ -77,19 +41,8 @@ int	count_tokens(const char *str, char delim)
 	quote_char = 0;
 	while (*str)
 	{
-		if (!in_quotes && (*str == '\'' || *str == '"'))
-		{
-			quote_char = *str;
-			in_quotes = 1;
-			str++;
+		if (handle_quotes(&str, &in_quotes, &quote_char))
 			continue ;
-		}
-		else if (in_quotes && *str == quote_char)
-		{
-			in_quotes = 0;
-			str++;
-			continue ;
-		}
 		if (!in_quotes && *str == delim)
 		{
 			count++;
@@ -108,99 +61,32 @@ char	*get_next_token(char **str, char delim)
 	char		*token;
 	int			in_quotes;
 	char		quote_char;
-	int			len;
-	int			preserve_quotes;
 
 	in_quotes = 0;
 	quote_char = 0;
-	len = 0;
-	preserve_quotes = 0;
-
-	
-
 	while (**str && (**str == delim || **str == ' ' || **str == '\t'))
 		(*str)++;
 	start = *str;
 	while (**str)
 	{
-		printf("`%p\n", *str);
-		if (**str == '\'' && ft_strncmp(*str - 2, "<<", 2) == 0)
-		{
-			printf("inside heredoc\n");
-			preserve_quotes = 1;
-			(*str)++;
-			while (**str && **str != '\'')
-				(*str)++;
-			if (**str == '\'')
-				(*str)++;
-		}
-		else if (!in_quotes && (**str == '\'' || **str == '"'))
-		{
-			quote_char = **str;
-			in_quotes = 1;
-			(*str)++;
-			len++;
-			continue;
-		}
-		else if (in_quotes && **str == quote_char)
-		{
-			in_quotes = 0;
-			(*str)++;
-			len++;
-			continue;
-		}
+		if (handle_quotes((const char **)str, &in_quotes, &quote_char))
+			continue ;
 		if (!in_quotes && **str == delim)
-			break;
+			break ;
 		(*str)++;
-		len++;
 	}
-
-	token = malloc(len + 1);
+	token = malloc((*str - start) + 1);
 	if (!token)
 		return (NULL);
-
-	const char *src = start;
-	char *dst = token;
-	in_quotes = 0;
-	quote_char = 0;
-
-	while (src < *str)
-	{
-		if (!in_quotes && (*src == '\'' || *src == '"'))
-		{
-			if (!preserve_quotes)
-			{
-				quote_char = *src;
-				in_quotes = 1;
-				src++;
-				continue;
-			}
-		}
-		else if (in_quotes && *src == quote_char)
-		{
-			in_quotes = 0;
-			src++;
-			continue;
-		}
-
-		*dst++ = *src++;
-	}
-	*dst = '\0';
-	printf("token 2  %s\n", token);
-
+	ft_strlcpy(token, start, (*str - start) + 1);
 	return (token);
 }
 
-char	**ft_split_shell(char *str, char delim)
+char	**allocate_tokens(char *str, char delim, int token_count)
 {
 	char	**result;
-	int		token_count;
 	int		i;
 
-	i = 0;
-	if (!str)
-		return (NULL);
-	token_count = count_tokens(str, delim);
 	result = malloc((token_count + 1) * sizeof(char *));
 	if (!result)
 		return (NULL);
@@ -219,23 +105,12 @@ char	**ft_split_shell(char *str, char delim)
 	return (result);
 }
 
-int has_unclosed_quotes(char *str)
+char	**ft_split_shell(char *str, char delim)
 {
-    int in_quotes = 0;
-    char quote_char = 0;
-    
-    while (*str)
-    {
-        if (!in_quotes && (*str == '\'' || *str == '"'))
-        {
-            quote_char = *str;
-            in_quotes = 1;
-        }
-        else if (in_quotes && *str == quote_char)
-        {
-            in_quotes = 0;
-        }
-        str++;
-    }
-    return in_quotes;
+	int	token_count;
+
+	if (!str)
+		return (NULL);
+	token_count = count_tokens(str, delim);
+	return (allocate_tokens(str, delim, token_count));
 }

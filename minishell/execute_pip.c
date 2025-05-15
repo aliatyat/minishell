@@ -6,129 +6,107 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 16:18:13 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/28 15:32:40 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:24:58 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	start_pipe(t_command *current, t_command *next, int *pipefd)
+void	wait_for_children(t_shell *shell)
 {
-	if (next == NULL)
-		return (0);
-	if (pipe(pipefd) == -1)
+	int		status;
+	pid_t	pid;
+
+	pid = wait(&status);
+	while (pid > 0)
 	{
-		ft_perror("pipe", 1);
-		return (1);
+		if (pid == shell->last_fork)
+		{
+			if (WIFEXITED(status))
+			{
+				g_signal_status = -1;
+				shell->exit_status = WEXITSTATUS(status);
+			}
+			else if (WIFSIGNALED(status))
+			{
+				g_signal_status = 128 + WTERMSIG(status);
+				shell->exit_status = -1;
+			}
+		}
+		pid = wait(&status);
 	}
-	current->out_fd = pipefd[1];
-	next->in_fd = pipefd[0];
+}
+
+int	check_heredoc_flag(t_command *cmd)
+{
+	int	i;
+
+	i = 0;
+	while (cmd->args[i])
+	{
+		if (ft_strncmp(cmd->args[i], "<<", 2) == 0)
+			return (1);
+		i++;
+	}
 	return (0);
 }
 
-void	execute_child(t_command *cmd, int prev_pipe_in, t_shell *shell)
+void	parent_process(int *prev_pipe_in, t_command *cmd, int heredoc_flag,
+		t_shell *shell)
 {
-	int f = 0;
-	while(cmd->args[f])
-	{
-		printf("CHILD: %s\n", cmd->args[f]);
-		f++;
-	}
-	if (handle_redirection1(cmd, shell) == -1)
-		exit(127) ;
-	
-	if (prev_pipe_in != -1)
-	{
-		dup2(prev_pipe_in, STDIN_FILENO);
-		//close(prev_pipe_in);
-	}
-	if (cmd->out_fd != STDOUT_FILENO)
-	{
-		dup2(cmd->out_fd, STDOUT_FILENO);
-		//close(cmd->out_fd);
-	}
-	close_all_pipes(shell->commands);
-	if (is_builtin(cmd->args[0]))
-		exit(execute_builtin(cmd, shell));
-	else
-		exit(execute_external(cmd, shell));
-}
-
-void	parent_cleanup(int *prev_pipe_in, t_command *cmd)
-{
-	(void)prev_pipe_in;
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	if (*prev_pipe_in != -1)
 		close(*prev_pipe_in);
-	if (cmd->out_fd != STDOUT_FILENO)
-		close(cmd->out_fd);
+	if (heredoc_flag)
+		wait_for_children(shell);
+	parent_cleanup(prev_pipe_in, cmd);
 }
 
-void	wait_for_children(t_shell *shell)
+int	process_pipeline_stage(t_pipe_var *var, int *prev_pipe_in, int pipefd[2],
+		t_shell *shell)
 {
-	int	status;
+	pid_t	pid;
 
-	while (wait(&status) > 0)
+	if (start_pipe(var->current, var->next, pipefd))
+		return (1);
+	pid = fork();
+	shell->last_fork = pid;
+	if (pid < 0)
 	{
-		if (WIFEXITED(status))
-			shell->exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			shell->exit_status = 128 + WTERMSIG(status);
+		ft_perror("fork", 1);
+		return (1);
 	}
+	if (pid == 0)
+	{
+		execute_child(var->current, *prev_pipe_in, shell);
+	}
+	else
+	{
+		parent_process(prev_pipe_in, var->current, var->f, shell);
+	}
+	if (var->next != NULL)
+		*prev_pipe_in = pipefd[0];
+	else
+		*prev_pipe_in = -1;
+	return (0);
 }
 
 int	execute_pipeline(t_command *cmd, t_shell *shell)
 {
 	int			pipefd[2];
-	pid_t		pid;
-	t_command	*current;
-	t_command	*next;
 	int			prev_pipe_in;
-	int i = 0;
-	current = cmd;
-	prev_pipe_in = -1;
-	while (current)
-	{
-		// printf("SHELL: %s CUR: %s \n", shell->commands->args[i] , current->args[0]);
-		// i++;
-		next = current->next;
-		int x = 0;
-		int f = 0;
-		while (current->args[x])
-		{
-			if (current->args[x] && ft_strncmp(current->args[x], "<<", 2) == 0)
-			{
-				f =1;
-			}
-			
-			x++;
-		}
-		if (start_pipe(current, next, pipefd))
-			return (1);
-		pid = fork();
-		if (pid < 0)
-			return (ft_perror("fork", 1), 1);
-		if (pid == 0)
-			execute_child(current, prev_pipe_in, shell);
-		else if (pid != 0)
-		{
-			int j = 0;
-			signal(SIGINT, SIG_IGN);
-			signal(SIGQUIT, SIG_IGN);
-			if (f)
-			{
-				
-				wait_for_children(shell);
+	t_pipe_var	var;
 
-			}
-				
-			
-			parent_cleanup(&prev_pipe_in, current);
-		}
-		if (next != NULL)
-		prev_pipe_in = pipefd[0];
-		else
-		prev_pipe_in = -1;
-		current = next;
+	var.current = cmd;
+	prev_pipe_in = -1;
+	while (var.current)
+	{
+		var.next = var.current->next;
+		var.f = check_heredoc_flag(var.current);
+		if (process_pipeline_stage(&var, &prev_pipe_in, pipefd, shell))
+			return (1);
+		var.current = var.next;
 	}
 	wait_for_children(shell);
 	return (shell->exit_status);

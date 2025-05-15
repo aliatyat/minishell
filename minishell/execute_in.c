@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:19 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/28 17:49:32 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:24:38 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,17 @@
 
 int	is_builtin(char *cmd)
 {
-	int	i;
+	int		i;
+	char	*builtins[8];
 
-	char	*builtins[] ={
-	"cd", "echo", "pwd", "export", "unset", "env", "exit", NULL};
+	builtins[0] = "cd";
+	builtins[1] = "echo";
+	builtins[2] = "pwd";
+	builtins[3] = "export";
+	builtins[4] = "unset";
+	builtins[5] = "env";
+	builtins[6] = "exit";
+	builtins[7] = NULL;
 	i = 0;
 	if (!cmd)
 		return (0);
@@ -30,77 +37,48 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-// char	*ft_strrechr(char *s, char *c)
-// {
-// 	char	*ch;
-// 	int		i;
-
-// 	i = 0;
-// 	ch = c;
-// 	while (s[i] != '\0')
-// 	{
-// 		if (s == ch)
-// 			return (s);
-// 		i++;
-// 	}
-// 	if (ch == NULL)
-// 		return ((char *)s);
-// 	return (NULL);
-// }
-
 int	handle_common_builtins(char *command, t_command *cmd, t_shell *shell)
 {
 	if (ft_strcmp(command, "echo") == 0)
 	{
 		ft_echo(cmd, shell);
-		return (exit_status = 0);
+		return (shell->exit_status = 0);
 	}
 	else if (ft_strcmp(command, "pwd") == 0)
 	{
-		exit_status = ft_pwd(cmd);
-		return (exit_status);
+		shell->exit_status = ft_pwd(cmd);
+		return (shell->exit_status);
 	}
 	else if (ft_strcmp(command, "env") == 0)
 	{
-		
-		exit_status = ft_env(shell);
-		return exit_status;
+		shell->exit_status = ft_env(shell);
+		return (shell->exit_status);
 	}
-	// else if (ft_split(command, '$') == 0)
-	// {
-	//     printf("innn\n");
-	//     //int i = 1;
-	//     ft_echo(cmd, shell);
-	//     // print_env_var(command, &command, shell, cmd->out_fd);
-	//     // process_echo_arg(command, shell, cmd->out_fd);
-	//     //     if (cmd->args[i + 1])
-	//     //     ft_putchar_fd(' ', cmd->out_fd);
-	//     return (shell->exit_status = 0);
-	// }
 	return (0);
 }
 
 int	handle_special_builtins(char *command, t_command *cmd, t_shell *shell)
 {
+	g_signal_status = -1;
 	if (ft_strcmp(command, "cd") == 0)
 	{
-		exit_status = ft_cd(cmd, shell);
-		return (exit_status);
+		shell->exit_status = ft_cd(cmd, shell);
+		return (shell->exit_status);
 	}
 	else if (ft_strcmp(command, "export") == 0)
 	{
-		exit_status = ft_export(cmd, shell);
-		return (exit_status);
+		shell->exit_status = ft_export(cmd, shell);
+		return (shell->exit_status);
 	}
 	else if (ft_strcmp(command, "unset") == 0)
 	{
-		exit_status = ft_unset(cmd, shell);
+		shell->exit_status = ft_unset(cmd, shell);
 		return (0);
 	}
 	else if (ft_strcmp(command, "exit") == 0)
 	{
-		ft_exit(cmd, shell);
-		return (1);
+		shell->exit_status = ft_exit(cmd, shell);
+		return (shell->exit_status);
 	}
 	return (0);
 }
@@ -113,47 +91,12 @@ int	execute_builtin(t_command *cmd, t_shell *shell)
 		return (0);
 	command = cmd->args[0];
 	if (handle_common_builtins(command, cmd, shell))
-		return (exit_status);
-	return (handle_special_builtins(command, cmd, shell));
-}
-
-int	execute_command(t_command *cmd, t_shell *shell)
-{
-	int i = 0;
-	int x = 0;
-	if (!cmd || !cmd->args || !cmd->args[0])
-		return (0);
-	while(shell->input[i])
 	{
-		if (shell->input[i] == '|' || shell->input[i] == '>' || shell->input[i] == '<')
-		{
-			x = 1;
-			break;
-		}
-		i++;
+		return (shell->exit_status);
 	}
-	// Check for malformed commands with unclosed quotes
-	printf("hello %d\n", x);
-	// If there's only one command and it's a builtin, execute directly
-	if (cmd->next == NULL)
-	//printf("HHHHHH\n");
-	if ( !cmd->next && ft_strcmp(cmd->args[0], "cd") == 0)
-	return(execute_builtin(cmd, shell));
-	else if (!cmd->next && (is_builtin(cmd->args[0]) && x == 0 ))
+	if (handle_special_builtins(command, cmd, shell))
 	{
-		execute_builtin(cmd, shell);
-		return (0);
+		return (shell->exit_status);
 	}
-	//else
-	// Otherwise execute as pipeline
-	int z = 0;
-	while (cmd->args[z])
-	{
-		
-		printf("HHHHHH   [%s]\n",cmd->args[z]);
-			
-		z++;
-	}
-	return execute_pipeline(cmd, shell);
-	//return 0;
+	return (0);
 }

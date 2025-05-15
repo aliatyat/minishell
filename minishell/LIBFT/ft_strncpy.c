@@ -1,37 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtok.c                                        :+:      :+:    :+:   */
+/*   ft_strncpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 16:31:36 by alalauty          #+#    #+#             */
-/*   Updated: 2025/05/05 19:03:35 by alalauty         ###   ########.fr       */
+/*   Created: 2025/04/30 22:08:43 by alalauty          #+#    #+#             */
+/*   Updated: 2025/05/05 19:04:21 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strtok(char *restrict str, const char *restrict delim)
+char	*ft_strncpy(char *dest, char *src, unsigned int n)
 {
-	static char	*next;
-	char		*token;
+	unsigned int	i;
 
-	if (str)
-		next = str;
-	if (!next)
-		return (NULL);
-	while (*next && ft_strchr(delim, *next))
-		next++;
-	if (!*next)
-		return (NULL);
-	token = next;
-	while (*next && !ft_strchr(delim, *next))
-		next++;
-	if (*next)
+	i = 0;
+	while (src[i] != '\0' && i < n)
 	{
-		*next = '\0';
-		next++;
+		dest[i] = src[i];
+		i++;
 	}
-	return (token);
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
 }

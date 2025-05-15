@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alalauty <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 13:56:37 by alalauty          #+#    #+#             */
-/*   Updated: 2024/08/30 19:41:35 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/13 21:23:22 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,3 @@ int	ft_atoi(const char *nptr)
 	}
 	return (num * res);
 }
-/*
-int	main(void)
-{
-	const char	str[];
-
-	str[] = "   --12345abc";
-	printf("%d", atoi(str));
-return (0);
-}
-*/

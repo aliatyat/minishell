@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 16:27:33 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/26 01:10:55 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/12 19:53:58 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ int	ft_error(char *cmd, char *msg, int status)
 	return (status);
 }
 
-
 int	ft_perror(char *cmd, int status)
 {
 	if (cmd)
@@ -33,4 +32,3 @@ int	ft_perror(char *cmd, int status)
 	}
 	return (status);
 }
-

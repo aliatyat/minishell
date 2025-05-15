@@ -1,37 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtok.c                                        :+:      :+:    :+:   */
+/*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/17 16:31:36 by alalauty          #+#    #+#             */
-/*   Updated: 2025/05/05 19:03:35 by alalauty         ###   ########.fr       */
+/*   Created: 2025/05/06 22:33:14 by alalauty          #+#    #+#             */
+/*   Updated: 2025/05/07 21:35:09 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strtok(char *restrict str, const char *restrict delim)
+void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 {
-	static char	*next;
-	char		*token;
+	size_t	copy_size;
+	void	*new_ptr;
 
-	if (str)
-		next = str;
-	if (!next)
-		return (NULL);
-	while (*next && ft_strchr(delim, *next))
-		next++;
-	if (!*next)
-		return (NULL);
-	token = next;
-	while (*next && !ft_strchr(delim, *next))
-		next++;
-	if (*next)
+	if (new_size == 0)
 	{
-		*next = '\0';
-		next++;
+		free(ptr);
+		return (NULL);
 	}
-	return (token);
+	if (!ptr)
+		return (malloc(new_size));
+	new_ptr = malloc(new_size);
+	if (!new_ptr)
+		return (NULL);
+	if (old_size < new_size)
+		copy_size = old_size;
+	else
+		copy_size = new_size;
+	ft_memcpy(new_ptr, ptr, copy_size);
+	free(ptr);
+	return (new_ptr);
 }

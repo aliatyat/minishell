@@ -6,7 +6,7 @@
 /*   By: alalauty <alalauty@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 17:35:31 by alalauty          #+#    #+#             */
-/*   Updated: 2025/04/17 17:35:43 by alalauty         ###   ########.fr       */
+/*   Updated: 2025/05/11 21:49:27 by alalauty         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,21 @@ void	free_2d_array(char **array)
 	while (array[i])
 	{
 		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
+void	free_3d_array(char ***array)
+{
+	int	i;
+
+	i = 0;
+	if (!array)
+		return ;
+	while (array[i])
+	{
+		free_2d_array(array[i]);
 		i++;
 	}
 	free(array);
